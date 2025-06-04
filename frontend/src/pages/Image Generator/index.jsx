@@ -16,7 +16,7 @@ import { loginSuccess } from '~/redux/authSlice';
 import { toast } from 'react-toastify';
 import ImageDownloader from '~/components/Layouts/components/ImageDownloader';
 import { AddToCartContext } from '~/components/Layouts/DefaultLayout';
-
+import CakeBuilder from '~/components/Layouts/components/GenerateAi/CakeBuilder';
 function GenImage() {
   const [selectedLabel, setSelectedLabel] = useState('');
   const [input, setInput] = useState('');
@@ -98,7 +98,7 @@ function GenImage() {
           </div>
         </div>
         <h1 className="text-center text-3xl font-bold leading-[48px] sm:text-4xl sm:leading-[56px] lg:text-5xl lg:leading-[72px]">
-          Tạo bánh với CakewAI
+          Tạo bánh với Dolciluxe
         </h1>
         <p className="text-center text-base font-normal leading-[32px] sm:text-lg sm:leading-[48px] lg:text-xl lg:leading-[64px]">
           Dolciluxe - Làm bạn với AI
@@ -106,7 +106,8 @@ function GenImage() {
         <div className="mx-auto max-w-screen-lg rounded-3xl border border-black lg:px-[3rem]">
           <div className="m-4 flex flex-col gap-6 sm:m-6 lg:flex-row lg:gap-10">
             {/* Form Section */}
-            <div className="w-full lg:basis-2/5">
+            <CakeBuilder />
+            {/* <div className="w-full lg:basis-2/5">
               <div className="promt mb-5">
                 <form id="promt" onSubmit={(e) => handleSubmit(e)}>
                   <label htmlFor="userInput" className="ml-4 text-base font-semibold sm:text-lg">
@@ -146,7 +147,7 @@ function GenImage() {
             </div>
 
             {/* Image Section */}
-            <div className="flex w-full flex-col items-center justify-center lg:basis-3/5">
+            {/* <div className="flex w-full flex-col items-center justify-center lg:basis-3/5">
               {!image && !loading ? (
                 <div className="mx-auto flex h-[200px] w-full max-w-[520px] items-center justify-center bg-slate-50 sm:h-[300px] lg:h-[400px]">
                   <p className="text-sm text-gray-500 sm:text-base">Chưa có ảnh bánh được tạo.</p>
@@ -192,35 +193,35 @@ function GenImage() {
                   Chỉnh sửa
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
-          {/* Success Message */}
+          {/* Success Message
           {image && (
             <div className="flex p-4">
               <p className="text-sm font-medium text-green-400 sm:text-base">
-                Tạo bánh thành công! Nếu quý khách muốn đặt bánh này, vui lòng liên hệ với Dolciluxe qua zalo 0966.888888
-                để được nhân viên tư vấn chi tiết!
+                Tạo bánh thành công! Nếu quý khách muốn đặt bánh này, vui lòng liên hệ với Dolciluxe qua zalo
+                0966.888888 để được nhân viên tư vấn chi tiết!
               </p>
             </div>
-          )}
+          )} */}
         </div>
         <div className="py-8">
           <div className="mx-auto px-4">
             <h1 className="mb-6 text-center text-4xl font-bold text-gray-800">
-              Biến Ý Tưởng Thành Tác Phẩm Nghệ Thuật Với <span className="text-pink-500">Dolciluxe AI</span>
+              Biến Ý Tưởng Thành Tác Phẩm Nghệ Thuật Với <span className="text-pink-500">Dolciluxe</span>
             </h1>
             <p className="mb-8 text-center text-lg text-gray-600">
-              Chỉ cần nhập ý tưởng, Dolciluxe sẽ giúp bạn tạo ra những hình ảnh bánh độc đáo trong vài giây. Dành cho
+              Chỉ cần chọn ý tưởng, Dolciluxe sẽ giúp bạn tạo ra những hình ảnh bánh độc đáo trong vài giây. Dành cho
               người làm nội dung, thợ làm bánh, hay bất kỳ ai đam mê sáng tạo.
             </p>
 
             <div className="grid gap-8 md:grid-cols-2">
               <div>
-                <h2 className="mb-4 text-2xl font-semibold text-gray-700">Tạo Ảnh Bánh Từ Ý Tưởng Với AI</h2>
+                <h2 className="mb-4 text-2xl font-semibold text-gray-700">Tạo Ảnh Bánh Từ Ý Tưởng Với Dolciluxe</h2>
                 <p className="mb-4 text-gray-600">
-                  Dolciluxe sử dụng công nghệ AI tiên tiến để chuyển đổi mô tả văn bản thành hình ảnh bánh chất lượng cao.
-                  Từ những thiết kế đơn giản đến những chi tiết phức tạp, tất cả đều trong tầm tay bạn.
+                  Dolciluxe sử dụng công nghệ AI tiên tiến để chuyển đổi mô tả văn bản thành hình ảnh bánh chất lượng
+                  cao. Từ những thiết kế đơn giản đến những chi tiết phức tạp, tất cả đều trong tầm tay bạn.
                 </p>
                 <ul className="list-inside list-disc text-gray-600">
                   <li>Chọn nhiều phong cách: Hiện đại, cổ điển, chân thực và hơn thế nữa.</li>
@@ -237,10 +238,10 @@ function GenImage() {
               <h2 className="mb-4 text-2xl font-semibold text-gray-800">Cách Sử Dụng Dolciluxe</h2>
               <div className="grid gap-6 text-left md:grid-cols-3">
                 <div className="rounded-lg bg-white p-6 shadow-md">
-                  <h3 className="mb-2 text-lg font-bold text-pink-500">1. Nhập Ý Tưởng</h3>
+                  <h3 className="mb-2 text-lg font-bold text-pink-500">1. Chọn Ý Tưởng</h3>
                   <p className="text-gray-600">
-                    Hãy mô tả chiếc bánh bạn muốn tạo ra. Ví dụ:
-                    <i>"Một chiếc bánh sinh nhật với hoa văn hoa hồng và ánh sáng lung linh."</i>
+                    Hãy lựa chọn các option bạn muốn tạo ra. Ví dụ:
+                    <i>"Số tầng, hình dạng, màu sắc, kem phủ,..."</i>
                   </p>
                 </div>
                 <div className="rounded-lg bg-white p-6 shadow-md">
@@ -253,7 +254,7 @@ function GenImage() {
                 <div className="rounded-lg bg-white p-6 shadow-md">
                   <h3 className="mb-2 text-lg font-bold text-pink-500">3. Tải Xuống</h3>
                   <p className="text-gray-600">
-                    Nhấn "Tạo Ảnh" để xem kết quả. Nếu chưa hài lòng, hãy điều chỉnh và tạo lại. Khi hoàn tất, bạn có
+                    Nhấn "Tải Ảnh" để lưu kết quả. Nếu chưa hài lòng, hãy điều chỉnh và tạo lại. Khi hoàn tất, bạn có
                     thể tải ảnh về hoặc chia sẻ trực tiếp.
                   </p>
                 </div>
