@@ -1,0 +1,132 @@
+html, body {
+    margin: 0;
+    height: 100%; /* Đảm bảo body và html có chiều cao đầy đủ */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f0f2f5;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+/* General button styling */
+button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:active {
+    background-color: #3e8e41;
+}
+
+/* Styling for the main app container */
+.app-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Căn chỉnh các item lên đầu */
+    padding: 20px;
+    gap: 20px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    min-height: 100vh; /* Đảm bảo container có chiều cao tối thiểu để cuộn */
+}
+
+/* Styling for the cake control panel */
+.cake-control {
+    flex: 1;
+    min-width: 280px; /* Minimum width for control panel */
+    max-width: 350px; /* Maximum width for control panel */
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Không cần overflow-y: auto ở đây nữa, toàn bộ trang sẽ cuộn */
+}
+
+.cake-control h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.cake-control h3 {
+    color: #555;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.options-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Actions section (Create Image, Reset buttons) */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    width: 100%; /* Take full width to center buttons below canvas */
+}
+
+.skip-button {
+    background-color: #f44336; /* Red for skip button */
+    margin-top: 15px;
+    width: 100%;
+}
+
+.skip-button:hover {
+    background-color: #da190b;
+}
+
+/* Đảm bảo phần hiển thị bánh không bị trượt theo khi cuộn */
+.cake-display-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    position: sticky; /* Giữ vị trí khi cuộn */
+    top: 20px; /* Dính vào vị trí cách top 20px */
+    align-self: flex-start; /* Giữ nó ở đầu trong flex container */
+}
+
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cake-control {
+        width: 90%;
+        max-width: 500px;
+    }
+
+    .cake-display-area {
+        position: static; /* Tắt sticky trên màn hình nhỏ để tránh lỗi bố cục */
+        top: auto;
+    }
+}
