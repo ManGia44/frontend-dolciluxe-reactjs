@@ -10,7 +10,6 @@
 //   }
 // };
 
-
 // export const createPaymentUrl = async (orderId) => {
 //   try {
 //     const res = await response.post('/api/payment/create-payment-url', { orderId });
