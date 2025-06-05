@@ -18,9 +18,9 @@ import AdminOrder from '~/pages/AdminOrder/order';
 import AdminCustomer from '~/pages/AdminCustomer/customer';
 import Payment from '~/components/Layouts/components/Payment';
 // import ThankYou from "~/components/Layouts/components/Payment/COD";
-import EmailRecovery from '~/components/Layouts/components/Forgot Password/EmailRecovery';
-import EmailSent from '~/components/Layouts/components/Forgot Password/EmailSent';
-import NewPassword from '~/components/Layouts/components/Forgot Password/NewPassword';
+// import EmailRecovery from '~/components/Layouts/components/Forgot Password/EmailRecovery';
+// import EmailSent from '~/components/Layouts/components/Forgot Password/EmailSent';
+// import NewPassword from '~/components/Layouts/components/Forgot Password/NewPassword';
 // import PaymentReturn from "~/components/Layouts/components/Payment/PaymentReturn";
 // import PaymentSuccess from "~/components/Layouts/components/Payment/PaymentSucess";
 // import PaymentFail from "~/components/Layouts/components/Payment/PaymentFail";
@@ -40,9 +40,9 @@ const publicRoute = [
   { path: '/condition', component: Condition },
   // { path: "/admin/login", component: AdminLogin, layout: null },
   { path: '/payment', component: Payment },
-  { path: '/email/recovery', component: EmailRecovery },
-  { path: '/email/message', component: EmailSent },
-  { path: '/reset-password', component: NewPassword },
+  // { path: '/email/recovery', component: EmailRecovery },
+  // { path: '/email/message', component: EmailSent },
+  // { path: '/reset-password', component: NewPassword },
   // { path: "/payment-return", component: PaymentReturn },
   // { path: "/payment-success", component: PaymentSuccess },
   // { path: "/payment-fail", component: PaymentFail },
