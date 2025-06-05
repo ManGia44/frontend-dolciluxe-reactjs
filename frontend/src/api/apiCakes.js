@@ -1,55 +1,31 @@
-import {response} from '~/services/axios'
+import axios from 'axios';
 
-export const getCake = (typeId) => {
-    return response.get(`/api/public/products/by-type/${typeId}`)
-}
+const api = axios.create({
+    baseURL: 'http://localhost:8080',
+});
 
-export const getCakeById = (id) => {
-    return response.get(`/api/public/product/${id}`)
-}
+// Lấy tất cả bánh
+export const getAllCakes = () => api.get('/api/product');
 
-export const getAllCakes = async () => {
-    try {
-        const res = await response.get(`/api/products/`);
-        return res;
-      } catch (err) {
-        console.error('Lỗi getOrder:', err.response?.data || err.message);
-        throw err;
-      }};
+// Lấy bánh theo id
+export const getCakeById = (id) => api.get(`/api/product/${id}`);
 
-export const createCake = (productData) => {
-    // Convert to backend format if needed
-    const data = {
-        productName: productData.productName,
-        imageLink: productData.imageLink,
-        description: productData.description,
-        productType: productData.productType,
-        quantity: Number(productData.quantity),
-        price: Number(productData.price)
-    };
-    return response.post('/api/public/product', data);
-};
+// Lấy bánh theo loại
+export const getCakesByType = (typeId) => api.get(`/api/product/by-type/${typeId}`);
 
-// API soft delete frontend
-export const deleteCake = (id) => {
-    return response.delete(`/api/public/product/soft-delete/${id}`); // Giữ nguyên route này
-  };
-  
+// Lấy bánh đã xóa mềm
+export const getDeletedCakes = () => api.get('/api/product/trash');
 
+// Tạo mới bánh
+export const createCake = (cake) => api.post('/api/product', cake);
 
-export const updateCake = (_id, product_name, image_link, price, quantity, description, product_type_id) => {
-    const data = {
-        _id,
-        product_name,
-        image_link,
-        price,
-        quantity,
-        description,
-        product_type_id,
-    };
-    return response.put(`/api/public/product/${_id}`, data)
-}
+// Cập nhật bánh
+export const updateCake = (id, cake) => api.put(`/api/product/${id}`, cake);
 
-export const fetchBestSeller = () => {
-    return response.get('/api/public/products/')
-}
+// Xóa mềm bánh
+export const deleteCake = (id) => api.delete(`/api/product/${id}`);
+
+// Khôi phục bánh đã xóa mềm
+export const restoreCake = (id) => api.patch(`/api/product/restore/${id}`);
+
+export const getCake = getCakeById;

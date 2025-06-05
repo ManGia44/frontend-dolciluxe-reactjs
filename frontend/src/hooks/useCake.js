@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getCake, getAllCakes } from '~/api/apiCakes';
+import { getCake, getAllCakes, getCakesByType } from '~/api/apiCakes';
+
 const useCake = (params) => {
   const [cakes, setCakes] = useState([]);
   const categories = [
@@ -25,16 +26,6 @@ const useCake = (params) => {
     }
   };
 
-  // const fetchCakes = async (typeId) => {
-  //   if (!typeId) return; // Không gọi nếu typeId rỗng
-  //   try {
-  //     const result = await getCake(typeId);
-  //     setCakes(result?.data || []);
-  //   } catch (error) {
-  //     console.error('Failed to fetch cakes:', error);
-  //     setCakes([]);
-  //   }
-  // };
   const fetchCakes = async (typeId) => {
     try {
       let result;
@@ -43,7 +34,7 @@ const useCake = (params) => {
         result = await getAllCakes();
       } else {
         // Nếu có typeId: lấy theo loại
-        result = await getCake(typeId);
+        result = await getCakesByType(typeId);
       }
       setCakes(result?.data || []);
     } catch (error) {
@@ -51,16 +42,12 @@ const useCake = (params) => {
       setCakes([]);
     }
   };
-  
-  
 
   useEffect(() => {
     const index = getTypeOfCakes(params);
     const selectedCategory = categories[index] || categories[0]; // fallback là "Tất cả sản phẩm"
     fetchCakes(selectedCategory.typeId); // gọi luôn, dù typeId null cũng fetchAll
   }, [params]);
-  
-  
 
   const index = getTypeOfCakes(params);
   return { cakes, categoryName: categories[index]?.name };

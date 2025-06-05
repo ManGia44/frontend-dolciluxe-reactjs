@@ -10,6 +10,7 @@ import { addCartItem, fetchCart } from '~/redux/cartSlice';
 const { Meta } = AntdCard;
 
 function Card({ image_link, product_name, description, price, index, id, categoryName, cake }) {
+  console.log('Card id:', id);
   const { triggerSuccessPopup } = useContext(AddToCartContext);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,6 +47,7 @@ function Card({ image_link, product_name, description, price, index, id, categor
       }}
       cover={
         <Link to={`/detailed/${id}`} state={{ categoryName }}>
+
           <img
             alt={product_name}
             src={image_link}
