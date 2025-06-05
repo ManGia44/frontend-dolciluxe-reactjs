@@ -2,6 +2,9 @@ import { Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { getOrders } from '~/api/apiOrder';
 
+
+
+
 const AccountOrders = ({ currentUser, instance }) => {
   const [orders, setOrders] = useState([]);
 
@@ -42,6 +45,7 @@ const AccountOrders = ({ currentUser, instance }) => {
     fetchOrderList();
   }, [currentUser, instance]);
 
+
   const columns = [
     {
       title: 'STT',
@@ -61,6 +65,7 @@ const AccountOrders = ({ currentUser, instance }) => {
     {
       title: 'Số tiền thanh toán',
       key: 'pay-amount',
+
       render: (_, record) => (
         <div className="flex flex-col items-center">
           <div>{record['pay-amount']}</div>
@@ -71,6 +76,7 @@ const AccountOrders = ({ currentUser, instance }) => {
           )}
         </div>
       ),
+
     },
     {
       title: 'Trạng thái đơn hàng',
