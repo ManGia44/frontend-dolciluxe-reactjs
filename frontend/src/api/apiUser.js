@@ -131,43 +131,47 @@ export const getListUsers = async () => {
       throw err;
     }
   }
-//ADDRESS
-  export const createAddress = async (data) => {
-    try {
-      const res = await response.post(`/api/address/`, data);
-      return res;
-    } catch (err) {
-      console.error('Lỗi createAddress:', err.response?.data || err.message);
-      throw err;
-    }
-  };
 
-  export const getAllAddress = async () => {
-    try {
-      const res = await response.get(`/api/address/`);
-      return res;
-    } catch (err) {
-      console.error('Lỗi getAllAddress:', err.response?.data || err.message );
-      throw err;
-    }
-  };
 
-  export const updateAddress = async (id, data) => {
-    try {
-      const res = await response.put(`/api/address/${id}`, data);
-      return res;
-    } catch (err) {
-      console.error('Lỗi updateAddress:', err.response?.data || err.message);
-      throw err;
-    }
-  };
+// ADDRESS 
 
-  export const deleteAddress = async (id) => {
-    try {
-      const res =  await response.delete(`/api/address/${id}`);
-      return res;
-    } catch (err) {
-        console.error('Lỗi deleteAddress:', err.response?.data || err.message);
-        throw err;
-    }
-  };
+export const createAddress = async (userId, data) => {
+  try {
+    const res = await response.post(`/api/address?userId=${userId}`, data);
+    return res;
+  } catch (err) {
+    console.error('Lỗi createAddress:', err.response?.data || err.message);
+    throw err;
+  }
+};
+
+export const getAllAddress = async (userId) => {
+  try {
+    const res = await response.get(`/api/address?userId=${userId}`);
+    return res;
+  } catch (err) {
+    console.error('Lỗi getAllAddress:', err.response?.data || err.message );
+    throw err;
+  }
+};
+
+export const updateAddress = async (id, userId, data) => {
+  try {
+    const res = await response.put(`/api/address/${String(id)}?userId=${String(userId)}`, data);
+    return res;
+  } catch (err) {
+    console.error('Lỗi updateAddress:', err.response?.data || err.message);
+    throw err;
+  }
+};
+
+export const deleteAddress = async (id, userId) => {
+  try {
+    const res = await response.delete(`/api/address/${String(id)}?userId=${String(userId)}`);
+    return res;
+  } catch (err) {
+    console.error('Lỗi deleteAddress:', err.response?.data || err.message);
+    throw err;
+  }
+};
+

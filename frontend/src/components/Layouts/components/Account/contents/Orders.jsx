@@ -1,7 +1,7 @@
-import { Table, Button } from 'antd';
+import { Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { getOrders } from '~/api/apiOrder';
-import { createPaymentUrl } from '~/api/apiPayment';
+
 const AccountOrders = ({ currentUser, instance }) => {
   const [orders, setOrders] = useState([]);
 
@@ -42,18 +42,6 @@ const AccountOrders = ({ currentUser, instance }) => {
     fetchOrderList();
   }, [currentUser, instance]);
 
-  const handlePayment = async (orderId) => {
-    try {
-      const { paymentUrl } = await createPaymentUrl(orderId); // Gọi API tạo URL thanh toán
-      console.log('url:', paymentUrl);
-      if (paymentUrl) {
-        window.location.href = paymentUrl; // Chuyển hướng đến trang thanh toán
-      }
-    } catch (err) {
-      console.error('Lỗi thanh toán:', err);
-    }
-  };
-
   const columns = [
     {
       title: 'STT',
@@ -76,14 +64,10 @@ const AccountOrders = ({ currentUser, instance }) => {
       render: (_, record) => (
         <div className="flex flex-col items-center">
           <div>{record['pay-amount']}</div>
-          {record['payment-status'] === 'Chưa thanh toán' && record['payment-method'] === 'VNPAY' ? (
-            <Button type="primary" size="small" className="mt-1" onClick={() => handlePayment(record.orderId)}>
-              Thanh toán
-            </Button>
-          ) : record['payment-method'] === 'COD' ? (
+          {record['payment-method'] === 'COD' ? (
             <span className="mt-1 text-sm text-red-600">{record['payment-status']}</span>
           ) : (
-            <span className="mt-1 text-sm text-green-600">Đã thanh toán</span>
+            <span className="mt-1 text-sm text-green-600">{record['payment-status']}</span>
           )}
         </div>
       ),
