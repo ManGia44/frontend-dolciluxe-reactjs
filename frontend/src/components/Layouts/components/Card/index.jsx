@@ -17,25 +17,26 @@ function Card({ image_link, product_name, description, price, index, id, categor
   const user = useSelector((state) => state.auth.login.currentUser);
 
   const handleAddToCart = async (cake) => {
-    if (!user) {
-      navigate('/auth?mode=signin');
-      return;
-    }
+  if (!user) {
+    navigate('/auth?mode=signin');
+    return;
+  }
 
-    try {
-      await dispatch(
-        addCartItem({
-          productId: cake._id,
-          quantity: 1
-        })
-      ).unwrap();
-      await dispatch(fetchCart()).unwrap();
-      triggerSuccessPopup();
-    } catch (error) {
-      console.error('Lỗi khi thêm vào giỏ hàng:', error);
-      message.error('Có lỗi xảy ra khi thêm vào giỏ hàng');
-    }
-  };
+  try {
+    await dispatch(
+      addCartItem({
+        productId: cake.id || cake._id,  // ưu tiên id, fallback _id
+        quantity: 1,
+      })
+    ).unwrap();
+    await dispatch(fetchCart()).unwrap();
+    triggerSuccessPopup();
+  } catch (error) {
+    console.error('Lỗi khi thêm vào giỏ hàng:', error);
+    message.error(error.message || 'Thêm vào giỏ hàng thất bại');
+  }
+};
+
 
   return (
     <AntdCard

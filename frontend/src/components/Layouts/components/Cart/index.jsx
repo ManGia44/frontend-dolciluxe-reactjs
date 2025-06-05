@@ -140,8 +140,8 @@ const Cart = () => {
   };
 
   const dataSource = cartItems.map((item) => ({
-    key: item.product._id,
-    itemId: item._id,
+    key: item.product.id,
+    itemId: item.id,
     product: {
       name: item.product.productName,
       image: item.product.imageLink,

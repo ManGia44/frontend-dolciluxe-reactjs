@@ -1,209 +1,170 @@
-import { Input, Modal, Select, notification, Upload, Button } from "antd";
+import { Input, Modal, Select, notification } from "antd";
 import { useEffect, useState } from "react";
-import { updateCake, getCakeById } from "~/api/apiCakes";
-import { UploadOutlined } from '@ant-design/icons';
-import axios from 'axios';
+import { updateCake } from "~/api/apiCakes";
 
-const UpdateProductModal = (props) => {
-    const { isModalUpdateOpen, setIsModalUpdateOpen, dataUpdate, setDataUpdate, fetchProducts } = props;
-    const { TextArea } = Input;
+const UpdateProductModal = ({ isModalUpdateOpen, setIsModalUpdateOpen, dataUpdate, setDataUpdate, fetchProducts }) => {
+  const { TextArea } = Input;
 
-    const [id, setId] = useState("");
-    const [productName, setProductName] = useState("");
-    const [imageFile, setImageFile] = useState("");
-    const [price, setPrice] = useState("");
-    const [quantity, setQuantity] = useState("");
-    const [description, setDescription] = useState("");
-    const [productType, setProductType] = useState(null);
-    const [uploading, setUploading] = useState(false);
+  const [id, setId] = useState("");
+  const [productName, setProductName] = useState("");
+  const [imageFile, setImageFile] = useState("");
+  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [description, setDescription] = useState("");
+  const [productType, setProductType] = useState(null);
 
-    // Handle image upload
-    const handleImageUpload = async (file) => {
-        setUploading(true);
-        const formData = new FormData();
-        formData.append('file', file);
+  // Khi modal mở, cập nhật các state từ dataUpdate
+  useEffect(() => {
+    if (isModalUpdateOpen && dataUpdate) {
+      console.log('DataUpdate in modal:', dataUpdate); // Debug log
+      
+      // Mapping đúng với cấu trúc dữ liệu từ API
+      setId(dataUpdate.id || dataUpdate._id || "");
+      setProductName(dataUpdate.productName || ""); // productName thay vì product_name
+      setImageFile(dataUpdate.imageLink || ""); // imageLink thay vì image_link
+      setPrice(dataUpdate.price !== undefined ? dataUpdate.price.toString() : "");
+      setQuantity(dataUpdate.quantity !== undefined ? dataUpdate.quantity.toString() : "");
+      setDescription(dataUpdate.description || "");
+      setProductType(dataUpdate.productType || null); // productType thay vì product_type_id
+    } else {
+      // reset khi đóng modal
+      setId("");
+      setProductName("");
+      setImageFile("");
+      setPrice("");
+      setQuantity("");
+      setDescription("");
+      setProductType(null);
+      setDataUpdate(null);
+    }
+  }, [isModalUpdateOpen, dataUpdate, setDataUpdate]);
 
-        try {
-            const response = await axios.post('http://localhost:8080/upload', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+  const handleSubmitBtn = async () => {
+    if (!productName || !imageFile || !price || !quantity || !description || !productType) {
+      notification.error({
+        message: "Validation Error",
+        description: "Vui lòng điền đầy đủ thông tin",
+      });
+      return;
+    }
 
-            if (response.data && response.data.imageUrl) {
-                setImageFile(response.data.imageUrl);
-                notification.success({
-                    message: "Thành công",
-                    description: "Đã tải ảnh lên thành công.",
-                });
-            } else {
-                throw new Error("Không nhận được URL hình ảnh từ server");
-            }
-        } catch (error) {
-            notification.error({
-                message: "Lỗi tải ảnh lên",
-                description: error.message || "Không thể tải hình ảnh lên.",
-            });
-            console.error("Image upload error:", error);
-        } finally {
-            setUploading(false);
-        }
-    };
+    try {
+      // Tạo object dữ liệu để gửi lên server
+      const cakeData = {
+        productName: productName,
+        imageLink: imageFile,
+        price: Number(price),
+        quantity: Number(quantity),
+        description: description,
+        productType: productType
+      };
 
-    // Fetch data when modal opens
-    useEffect(() => {
-        const fetchCakeData = async () => {
-            if (dataUpdate && dataUpdate._id) {
-                try {
-                    const res = await getCakeById(dataUpdate._id);
-                    if (res && res.data) {
-                        const { _id, productName, imageFile, price, quantity, description, productType } = res.data;
-                        setId(_id);
-                        setProductName(productName || "");
-                        setImageFile(imageFile || "");
-                        setPrice(price || "");
-                        setQuantity(quantity || "");
-                        setDescription(description || "");
-                        setProductType(productType || null);
-                    }
-                } catch (error) {
-                    console.error("Lỗi khi tải dữ liệu:", error);
-                    notification.error({
-                        message: "Lỗi tải dữ liệu",
-                        description: "Không thể tải thông tin sản phẩm.",
-                    });
-                }
-            }
-        };
+      console.log('Sending update data:', { id, cakeData }); // Debug log
 
-        if (isModalUpdateOpen) {
-            fetchCakeData();
-        } else {
-            setId("");
-            setProductName("");
-            setImageFile("");
-            setPrice("");
-            setQuantity("");
-            setDescription("");
-            setProductType(null);
-        }
-    }, [isModalUpdateOpen, dataUpdate]);
-
-    const handleSubmitBtn = async () => {
-        if (!productName || !imageFile || !price || !quantity || !description || !productType) {
-            notification.error({
-                message: "Validation Error",
-                description: "Vui lòng điền đầy đủ thông tin",
-            });
-            return;
-        }
-
-        try {
-            const res = await updateCake(id, productName, imageFile, price, quantity, description, productType);
-            if (res.code === 200) {
-                notification.success({
-                    message: "Cập nhật sản phẩm",
-                    description: "Cập nhật bánh thành công",
-                });
-                resetAndCloseModal();
-                await fetchProducts();
-            } else {
-                throw new Error("Cập nhật thất bại");
-            }
-        } catch (error) {
-            notification.error({
-                message: "Lỗi cập nhật sản phẩm",
-                description: "Cập nhật thất bại",
-            });
-        }
-    };
-
-    const resetAndCloseModal = () => {
+      const res = await updateCake(id, cakeData);
+      console.log('Update response:', res); // Debug log
+      
+      if (res.code === 200 || res.status === 200) {
+        notification.success({
+          message: "Cập nhật sản phẩm",
+          description: "Cập nhật bánh thành công",
+        });
         setIsModalUpdateOpen(false);
-        setId("");
-        setProductName("");
-        setImageFile("");
-        setPrice("");
-        setQuantity("");
-        setDescription("");
-        setProductType(null);
-        setDataUpdate(null);
-    };
+        await fetchProducts();
+      } else {
+        throw new Error(`Cập nhật thất bại - Status: ${res.status || res.code}`);
+      }
+    } catch (error) {
+      console.error('Update error:', error); // Debug log
+      notification.error({
+        message: "Lỗi cập nhật sản phẩm",
+        description: error.response?.data?.message || error.message || "Cập nhật thất bại",
+      });
+    }
+  };
 
-    return (
-        <Modal
-            title="Cập nhật sản phẩm"
-            open={isModalUpdateOpen}
-            onOk={handleSubmitBtn}
-            onCancel={resetAndCloseModal}
-            okButtonProps={{ style: { backgroundColor: "#664545" } }}
-            maskClosable={false}
-            okText="Cập nhật"
-            cancelText="Hủy"
-            width={1000}
-        >
-            <div style={{ display: "flex", gap: "15px", flexDirection: "column" }}>
-                <div>
-                    <span>Loại bánh</span>
-                    <Select
-                        style={{ width: "100%" }}
-                        placeholder="Chọn loại bánh"
-                        options={[
-                            { value: '67de79685a1a07a80a724780', label: 'Bánh sinh nhật' },
-                            { value: '67de79685a1a07a80a724781', label: 'Bánh mỳ & Bánh khác' },
-                            { value: '67de79685a1a07a80a724783', label: 'Cookies & Mini Cake' },
-                            { value: '67de79685a1a07a80a724782', label: 'Bánh truyền thống' },
-                        ]}
-                        value={productType}
-                        onChange={(value) => setProductType(value)}
-                    />
-                </div>
+  return (
+    <Modal
+      title="Cập nhật sản phẩm"
+      open={isModalUpdateOpen}
+      onOk={handleSubmitBtn}
+      onCancel={() => setIsModalUpdateOpen(false)}
+      okButtonProps={{ style: { backgroundColor: "#664545" } }}
+      maskClosable={false}
+      okText="Cập nhật"
+      cancelText="Hủy"
+      width={1000}
+    >
+      <div style={{ display: "flex", gap: "15px", flexDirection: "column" }}>
+        <div>
+          <span>Loại bánh</span>
+          <Select
+            style={{ width: "100%" }}
+            placeholder="Chọn loại bánh"
+            options={[
+              { value: '67de79685a1a07a80a724780', label: 'Bánh sinh nhật' },
+              { value: '67de79685a1a07a80a724781', label: 'Bánh mỳ & Bánh khác' },
+              { value: '67de79685a1a07a80a724783', label: 'Cookies & Mini Cake' },
+              { value: '67de79685a1a07a80a724782', label: 'Bánh truyền thống' },
+            ]}
+            value={productType}
+            onChange={setProductType}
+          />
+        </div>
 
-                <div>
-                    <span>Sản phẩm</span>
-                    <Input
-                        value={productName}
-                        onChange={(e) => setProductName(e.target.value)}
-                    />
-                </div>
+        <div>
+          <span>Sản phẩm</span>
+          <Input
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+          />
+        </div>
 
-                <div>
-                    <span>Hình ảnh </span>
-                    <Upload
-                        customRequest={({ file }) => handleImageUpload(file)}
-                        showUploadList={false}
-                    >
-                        <Button icon={<UploadOutlined />} loading={uploading}>Tải ảnh lên</Button>
-                    </Upload>
-                </div>
+        <div>
+          <span>Hình ảnh (URL)</span>
+          <Input
+            value={imageFile}
+            onChange={(e) => setImageFile(e.target.value)}
+            placeholder="Nhập URL hình ảnh"
+          />
+          {imageFile && (
+            <img
+              src={imageFile}
+              alt="product"
+              style={{ width: "100px", height: "90px", objectFit: "cover", marginTop: "10px" }}
+            />
+          )}
+        </div>
 
-                <div>
-                    <span>Giá</span>
-                    <Input
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                    />
-                </div>
+        <div>
+          <span>Giá</span>
+          <Input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
+        </div>
 
-                <div>
-                    <span>Số lượng</span>
-                    <Input
-                        value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
-                    />
-                </div>
+        <div>
+          <span>Số lượng</span>
+          <Input
+            type="number"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+          />
+        </div>
 
-                <div>
-                    <span>Description</span>
-                    <TextArea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        rows={4}
-                    />
-                </div>
-            </div>
-        </Modal>
-    );
+        <div>
+          <span>Mô tả</span>
+          <TextArea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+          />
+        </div>
+      </div>
+    </Modal>
+  );
 };
 
 export default UpdateProductModal;
