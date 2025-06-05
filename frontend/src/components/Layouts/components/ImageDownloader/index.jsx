@@ -26,9 +26,15 @@ function ImageDownloader({ imageUrl }) {
   };
 
   return (
-    <div onClick={handleDownload} className="cursor-pointer">
-      <IoDownloadOutline size={36} />
-    </div>
+    // // <div onClick={handleDownload} className="cursor-pointer">
+    // //   <IoDownloadOutline size={36} />
+    // // </div>
+    <button
+        onClick={handleDownload}
+        className="rounded-lg bg-green-600 px-5 py-2 text-white shadow hover:bg-green-700"
+    >
+      Tải ảnh
+    </button>
   );
 }
 

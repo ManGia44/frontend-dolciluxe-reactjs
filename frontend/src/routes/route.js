@@ -1,5 +1,6 @@
 import Home from '../pages/Home';
-import GenImage from '../pages/Image Generator';
+import DesignImage from '../pages/Image Designer';
+import GenImage from '~/pages/Image Generator';
 import About from '../pages/About/about';
 import News from '../pages/News';
 import Category from '../pages/Categories/category';
@@ -31,6 +32,7 @@ import NotFound from '~/pages/error';
 const publicRoute = [
   { path: '/', component: Home },
   { path: '/generator', component: GenImage },
+  { path: '/design', component: DesignImage},
   { path: '/about', component: About },
   { path: '/news', component: News },
   { path: '/category', component: Category },

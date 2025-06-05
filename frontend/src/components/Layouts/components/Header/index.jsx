@@ -120,8 +120,11 @@ function Header() {
           <li className={pathname === '/news' ? 'menu-active' : 'menu-navbar'}>
             <NavLink to="/news">TIN TỨC</NavLink>
           </li>
+          <li className={pathname === '/design' ? 'menu-active' : 'menu-navbar'}>
+            <NavLink to="/design">THIẾT KẾ</NavLink>
+          </li>
           <li className={pathname === '/generator' ? 'menu-active' : 'menu-navbar'}>
-            <NavLink to="/generator">AI</NavLink>
+            <NavLink to="/generator">TẠO NHANH</NavLink>
           </li>
           <li className={pathname === '/about' ? 'menu-active' : 'menu-navbar'}>
             <NavLink to="/about">VỀ CHÚNG TÔI</NavLink>
