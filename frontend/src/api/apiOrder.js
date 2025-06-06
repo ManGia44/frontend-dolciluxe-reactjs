@@ -1,16 +1,14 @@
-import { response } from '~/services/axios'
-
+import { response } from '~/services/axios';
 
 export const getOrders = async () => {
   try {
-    const res = await response.get(`/api/orders/`);
+    const res = await response.get(`/api/orders`);
     return res;
   } catch (err) {
     console.error('Lỗi getOrder:', err.response?.data || err.message);
     throw err;
   }
-}
-
+};
 
 export const deleteOrders = async (id) => {
   try {
@@ -44,7 +42,6 @@ export const getOrderDetail = async (id) => {
 
 export const createOrder = async (instance, invoice) => {
   try {
-
     const res = await instance.post(`/api/orders`, invoice, {});
     return res.data;
   } catch (err) {

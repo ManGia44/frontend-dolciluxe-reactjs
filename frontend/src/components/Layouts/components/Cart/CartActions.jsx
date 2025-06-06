@@ -14,6 +14,9 @@ const CartActions = ({ hasSelected, onCheckout, onRemoveSelected, selectedCount,
         }}
       >
         <Button
+          style={{
+            borderColor: hasSelected ? '#664545' : undefined,
+          }}
           type="text"
           onClick={hasSelected ? onRemoveSelected : null}
           size="middle"

@@ -90,7 +90,7 @@ const AccountProfile = ({ currentUser, instance }) => {
 
   return (
     <div className="flex-col">
-      <div className="flex basis-1/3 flex-col items-center justify-center w-full">
+      <div className="flex w-full basis-1/3 flex-col items-center justify-center">
         <div className="relative size-40 rounded-full border-2">
           <img
             src={image ? URL.createObjectURL(image) : userData?.profile_picture || userData?.avatar || avatar}
