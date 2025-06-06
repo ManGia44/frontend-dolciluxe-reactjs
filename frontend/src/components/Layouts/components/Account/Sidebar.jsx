@@ -56,12 +56,12 @@ const Sidebar = ({ currentKey, handleUpdateContent, currentUser, instance }) => 
       key: 'orders',
     },
   ];
-  if (loginType !== 'google') {
-    items.splice(1, 0, {
-      label: <NavLink to={'/account/change-password'}>Đổi mật khẩu</NavLink>,
-      key: 'change-password',
-    });
-  }
+  // if (loginType !== 'google') {
+  //   items.splice(1, 0, {
+  //     label: <NavLink to={'/account/change-password'}>Đổi mật khẩu</NavLink>,
+  //     key: 'change-password',
+  //   });
+  // }
   return (
     <div className="mb-16 mt-16 flex flex-col gap-[20px] md:flex-row md:items-start">
       <div className="[flex-basis:25%]">

@@ -1,25 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getAllAddress, createAddress, updateAddress, deleteAddress, getCurrentUser } from '~/api/apiUser';
 import AddressSelector from './AddressSelector';
-import {
-  Card,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Checkbox,
-  List,
-  Tag,
-  Popconfirm,
-  message,
-  Typography
-} from 'antd';
-import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  EnvironmentOutlined
-} from '@ant-design/icons';
+import { Card, Button, Modal, Form, Input, Checkbox, List, Tag, Popconfirm, message, Typography } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined, EnvironmentOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
@@ -47,10 +30,11 @@ export default function Address() {
     const fetchUser = async () => {
       try {
         const user = await getCurrentUser();
+        console.log('Fetched user:', user);
         const id = user?.data?.id || user?.data?._id;
         setUserId(id);
         console.log('Current user:', user);
-      } catch {
+      } catch (error) {
         message.error('Không thể tải thông tin người dùng');
       }
     };
@@ -66,7 +50,21 @@ export default function Address() {
       message.error('Lỗi khi tải danh sách địa chỉ');
     }
   };
+  // const fetchAddresses = async () => {
+  //   try {
+  //     const res = await getAllAddress();
+  //     console.log('Addresses fetched:', res);
+  //     setAddresses(Array.isArray(res) ? res : []);
+  //   } catch {
+  //     message.error('Lỗi khi tải danh sách địa chỉ');
+  //     setAddresses([]); // đảm bảo không bị null sau khi lỗi
+  //   }
+  // };
 
+  useEffect(() => {
+    fetchAddresses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     if (userId) fetchAddresses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,7 +98,7 @@ export default function Address() {
               const id = getRealId(addr._id);
               console.log('updateAddress unset default id:', id, 'type:', typeof id);
               return updateAddress(id, userId, { ...addr, isDefault: false });
-            })
+            }),
         );
       }
 
@@ -112,8 +110,26 @@ export default function Address() {
         await createAddress(userId, cleanedValues);
         message.success('Thêm địa chỉ thành công');
       }
+      // if (cleanedValues.isDefault) {
+      //   await Promise.all(
+      //     addresses
+      //       .filter((addr) => addr.isDefault)
+      //       .map((addr) => {
+      //         const id = getRealId(addr._id);
+      //         return updateAddress(id, { ...addr, isDefault: false });
+      //       }),
+      //   );
+      // }
 
-      fetchAddresses();
+      // if (editId) {
+      //   await updateAddress(editId, cleanedValues);
+      //   message.success('Cập nhật địa chỉ thành công');
+      // } else {
+      //   await createAddress(cleanedValues);
+      //   message.success('Thêm địa chỉ thành công');
+      // }
+
+      await fetchAddresses(); // đợi lấy dữ liệu xong mới đóng modal
       handleClose();
     } catch (err) {
       console.error('Lỗi khi lưu địa chỉ:', err);
@@ -137,12 +153,23 @@ export default function Address() {
             const addrId = getRealId(addr._id);
             console.log('updateAddress unset default id:', addrId, 'type:', typeof addrId);
             return updateAddress(addrId, userId, { ...addr, isDefault: false });
-          })
+          }),
       );
 
       const { _id, user, ...rest } = current;
       console.log('updateAddress set default id:', id, 'type:', typeof id);
       await updateAddress(id, userId, { ...rest, isDefault: true });
+      // await Promise.all(
+      //   addresses
+      //     .filter((addr) => getRealId(addr._id) !== id && addr.isDefault)
+      //     .map((addr) => {
+      //       const addrId = getRealId(addr._id);
+      //       return updateAddress(addrId, { ...addr, isDefault: false });
+      //     }),
+      // );
+
+      // const { _id, user, ...rest } = current;
+      // await updateAddress(id, { ...rest, isDefault: true });
 
       message.success('Cập nhật địa chỉ mặc định thành công');
       fetchAddresses();
@@ -167,7 +194,9 @@ export default function Address() {
       }
 
       console.log('deleteAddress id:', id, 'type:', typeof id);
-      await deleteAddress(id, userId);
+      // await deleteAddress(id, userId);
+      await deleteAddress(id);
+
       message.success('Đã xóa địa chỉ');
       fetchAddresses();
     } catch (err) {
@@ -190,14 +219,12 @@ export default function Address() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col w-full">
-        <div className="flex items-center justify-between mb-6">
-          <Text strong className="text-xl">Địa chỉ giao hàng</Text>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => handleOpen()}
-          >
+      <div className="flex w-full flex-col">
+        <div className="mb-6 flex items-center justify-between">
+          <Text strong className="text-xl">
+            Địa chỉ giao hàng
+          </Text>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpen()}>
             Thêm địa chỉ
           </Button>
         </div>
@@ -217,32 +244,32 @@ export default function Address() {
               const realId = getRealId(addr._id);
 
               return (
-                <List.Item className="!p-0 !border-b">
-                  <div className={`flex items-center w-full p-4 hover:bg-gray-50 ${addr.isDefault ? 'bg-blue-50' : ''}`}>
-                    <div className="flex items-center flex-1 min-w-0">
+                <List.Item className="!border-b !p-0">
+                  <div
+                    className={`flex w-full items-center p-4 hover:bg-gray-50 ${addr.isDefault ? 'bg-blue-50' : ''}`}
+                  >
+                    <div className="flex min-w-0 flex-1 items-center">
                       <EnvironmentOutlined className={`mr-3 ${addr.isDefault ? 'text-blue-500' : 'text-gray-500'}`} />
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 truncate">
-                          <Text strong className="truncate max-w-[120px]">
+                          <Text strong className="max-w-[120px] truncate">
                             {addr.fullName}
                           </Text>
                           <Text type="secondary">|</Text>
-                          <Text className="text-gray-600 truncate max-w-[100px]">
-                            {addr.phone}
-                          </Text>
+                          <Text className="max-w-[100px] truncate text-gray-600">{addr.phone}</Text>
                           {addr.isDefault && (
                             <Tag color="blue" className="ml-2 flex-shrink-0">
                               Mặc định
                             </Tag>
                           )}
                         </div>
-                        <Text ellipsis className="text-gray-600 mt-1">
+                        <Text ellipsis className="mt-1 text-gray-600">
                           {addr.full_address || `${addr.detail}, ${addr.ward}, ${addr.district}, ${addr.province}`}
                         </Text>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                    <div className="ml-4 flex flex-shrink-0 items-center gap-2">
                       {!addr.isDefault && (
                         <Button
                           size="small"
@@ -271,7 +298,7 @@ export default function Address() {
                         <Button
                           type="text"
                           icon={<DeleteOutlined />}
-                          className={`text-gray-500 hover:text-red-500 ${addr.isDefault ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          className={`text-gray-500 hover:text-red-500 ${addr.isDefault ? 'cursor-not-allowed opacity-50' : ''}`}
                           danger
                           disabled={addr.isDefault}
                         />
@@ -292,28 +319,14 @@ export default function Address() {
             <Button key="back" onClick={handleClose}>
               Hủy
             </Button>,
-            <Button
-              key="submit"
-              type="primary"
-              loading={loading}
-              onClick={handleSubmit}
-            >
+            <Button key="submit" type="primary" loading={loading} onClick={handleSubmit}>
               Lưu
             </Button>,
           ]}
           width={900}
         >
-          <Form
-            form={form}
-            layout="vertical"
-            initialValues={initialForm}
-            className="w-full"
-          >
-            <Form.Item
-              name="fullName"
-              label="Họ và tên"
-              rules={[{ required: true, message: 'Vui lòng nhập họ tên' }]}
-            >
+          <Form form={form} layout="vertical" initialValues={initialForm} className="w-full">
+            <Form.Item name="fullName" label="Họ và tên" rules={[{ required: true, message: 'Vui lòng nhập họ tên' }]}>
               <Input />
             </Form.Item>
 
@@ -327,10 +340,7 @@ export default function Address() {
 
             <AddressSelector form={form} />
 
-            <Form.Item
-              name="isDefault"
-              valuePropName="checked"
-            >
+            <Form.Item name="isDefault" valuePropName="checked">
               <Checkbox>Đặt làm địa chỉ mặc định</Checkbox>
             </Form.Item>
           </Form>

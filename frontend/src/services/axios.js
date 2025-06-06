@@ -4,7 +4,7 @@ const BE_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const response = axios.create({
   baseURL: BE_BASE_URL,
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 // Interceptor REQUEST
@@ -70,7 +70,7 @@ response.interceptors.response.use(
     }
 
     return Promise.reject(err);
-  }
+  },
 );
 
 export { response, BE_BASE_URL };
