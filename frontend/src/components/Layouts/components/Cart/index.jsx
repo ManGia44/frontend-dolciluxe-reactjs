@@ -28,6 +28,7 @@ const Cart = () => {
     const productId = location.state.autoSelectedKey;
     const targetItem = cartItems.find((item) => item.product.id === productId);
 
+
     if (targetItem) {
       setSelectedRowKeys([productId]);
       setSelectedItemIds([targetItem.id]);
@@ -41,6 +42,7 @@ const Cart = () => {
     const newSelectedItemIds = cartItems
       .filter((item) => newSelectedRowKeys.includes(item.product.id))
       .map((item) => item.id);
+
 
     setSelectedItemIds(newSelectedItemIds);
     console.log('selectedRowKeys changed: ', newSelectedRowKeys);
