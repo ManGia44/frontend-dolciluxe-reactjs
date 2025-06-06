@@ -17,9 +17,9 @@ export const addCartItem = async (instance, item) => {
   }
 };
 
-export const updateCartItem = async (instance, item) => {
+export const updateCartItem = async (instance, { productId, quantity }) => {
   try {
-    const res = await instance.put('/api/cart', item);
+    const res = await instance.put('/api/cart', { productId, quantity });
     return res;
   } catch (err) {
     handleError(err, 'updateCartItem');
@@ -58,9 +58,13 @@ export const createOrder = async (instance, invoice) => {
 // --- helper function ---
 const handleError = (err, name) => {
   if (err.response) {
-    console.error(`[${name}] Server error:`, err.response.data?.message || err.message, err.response.status);
+    console.error(
+      `[${name}] Server error:`,
+      err.response.data?.message || err.message,
+      `Status: ${err.response.status}`
+    );
   } else {
     console.error(`[${name}] Request error:`, err.message);
   }
-  throw err; // Để caller biết lỗi
+  throw err;
 };
