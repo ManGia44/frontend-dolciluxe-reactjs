@@ -29,7 +29,8 @@ function AdminCustomer() {
       try {
         const [userRes, orderRes] = await Promise.all([getListUsers(), getOrders()]);
         const orders = orderRes.data || [];
-        const enrichedUsers = userRes.data.map((user) => {
+        const usersArr = Array.isArray(userRes.data) ? userRes.data : [];
+        const enrichedUsers = usersArr.map((user) => {
           const userOrders = orders.filter((order) => order.user === user.id);
           return { ...user, orderCount: userOrders.length };
         });
