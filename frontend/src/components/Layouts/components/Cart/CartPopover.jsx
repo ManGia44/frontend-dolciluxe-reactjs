@@ -66,7 +66,7 @@ const CartPopover = () => {
                         locale={{ emptyText: 'Giỏ hàng trống' }}
                         renderItem={(item) => (
                             <div
-                                onClick={() => navigate(`/detailed/${item.product._id}`)}
+                                onClick={() => navigate(`/detailed/${item.product.id}`)}
                                 style={{
                                     padding: '8px 12px',
                                     borderRadius: 8,

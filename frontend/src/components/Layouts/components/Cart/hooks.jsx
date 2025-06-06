@@ -1,3 +1,4 @@
+// src/hooks/useCart.js
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
@@ -16,7 +17,6 @@ export const useCart = (user) => {
   const dispatch = useDispatch();
   const instance = createInstance(user, dispatch, loginSuccess);
 
-  // Lấy giỏ hàng từ server
   const fetchCart = async () => {
     if (!user?.accessToken) {
       setCartItems([]);
@@ -26,7 +26,7 @@ export const useCart = (user) => {
     setLoading(true);
     try {
       const res = await getCart(instance);
-      if (res.data && res.data.items) {
+      if (res.data?.items) {
         setCartItems(res.data.items);
       }
     } catch (error) {
@@ -36,7 +36,6 @@ export const useCart = (user) => {
     }
   };
 
-  // Xoá 1 sản phẩm khỏi giỏ
   const removeItem = async (productId) => {
     try {
       await removeCartItem(instance, productId);
@@ -48,7 +47,6 @@ export const useCart = (user) => {
     }
   };
 
-  // Xoá nhiều sản phẩm khỏi giỏ
   const removeMultipleItems = async (productIds) => {
     try {
       await removeManyCartItem(instance, productIds);
@@ -60,18 +58,17 @@ export const useCart = (user) => {
     }
   };
 
-  // Cập nhật số lượng sản phẩm
   const updateItemQuantity = async (productId, quantity) => {
-    try {
-      await updateCartItem(instance, { productId, quantity });
-      await fetchCart();
-    } catch (error) {
-      console.error('Error updating quantity:', error);
-      throw error;
-    }
-  };
+  try {
+    await updateCartItem(instance, { productId, quantity });
+    await fetchCart();
+  } catch (error) {
+    console.error('Error updating quantity:', error);
+    throw error;
+  }
+};
 
-  // Gọi khi user hoặc accessToken thay đổi
+
   useEffect(() => {
     if (user?.accessToken) {
       fetchCart();

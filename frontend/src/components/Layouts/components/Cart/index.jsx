@@ -26,7 +26,7 @@ const Cart = () => {
     if (!cartItems || cartItems.length === 0) return;
 
     const productId = location.state.autoSelectedKey;
-    const targetItem = cartItems.find(item => item.product._id === productId);
+    const targetItem = cartItems.find(item => item.product.id === productId);
 
     if (targetItem) {
       setSelectedRowKeys([productId]);
@@ -39,7 +39,7 @@ const Cart = () => {
 
     // Tính toán selectedItemIds tương ứng
     const newSelectedItemIds = cartItems
-      .filter(item => newSelectedRowKeys.includes(item.product._id))
+      .filter(item => newSelectedRowKeys.includes(item.product.id))
       .map(item => item._id);
 
     setSelectedItemIds(newSelectedItemIds);
@@ -153,7 +153,7 @@ const Cart = () => {
 
   const totalAmount = formatCurrency(
     selectedRowKeys.reduce((sum, key) => {
-      const item = cartItems.find((cartItem) => cartItem.product._id === key);
+      const item = cartItems.find((cartItem) => cartItem.product.id === key);
       return sum + (item ? item.product.price * item.quantity : 0);
     }, 0)
   );
