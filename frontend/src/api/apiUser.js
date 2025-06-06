@@ -15,7 +15,7 @@ export const getCurrentUser = async () => {
 export const updateUser = async (data) => {
   try {
     const { id, ...updateData } = data;
-    const res = await response.put(`/api/users/${id}`, updateData);
+    const res = await response.put(`/api/users/current-user/update-info`, updateData);
     return res;
   } catch (err) {
     console.error('Lỗi updateUser:', err.response?.data || err.message);
@@ -142,9 +142,9 @@ export const createAddress = async (userId, data) => {
   }
 };
 
-export const getAllAddress = async (userId) => {
+export const getAllAddress = async () => {
   try {
-    const res = await response.get(`/api/address?userId=${userId}`);
+    const res = await response.get(`/api/address`);
     return res;
   } catch (err) {
     console.error('Lỗi getAllAddress:', err.response?.data || err.message);

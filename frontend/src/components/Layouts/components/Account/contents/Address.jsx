@@ -31,7 +31,7 @@ export default function Address() {
       try {
         const user = await getCurrentUser();
         console.log('Fetched user:', user);
-        const id = user?.data?.id || user?.data?._id;
+        const id = user?.data?.id || user?.data?.id;
         setUserId(id);
         console.log('Current user:', user);
       } catch (error) {
@@ -41,25 +41,25 @@ export default function Address() {
     fetchUser();
   }, []);
 
-  const fetchAddresses = async () => {
-    if (!userId) return;
-    try {
-      const res = await getAllAddress(userId);
-      setAddresses(res || []);
-    } catch {
-      message.error('Lỗi khi tải danh sách địa chỉ');
-    }
-  };
   // const fetchAddresses = async () => {
+  //   if (!userId) return;
   //   try {
-  //     const res = await getAllAddress();
-  //     console.log('Addresses fetched:', res);
-  //     setAddresses(Array.isArray(res) ? res : []);
+  //     const res = await getAllAddress(userId);
+  //     setAddresses(res || []);
   //   } catch {
   //     message.error('Lỗi khi tải danh sách địa chỉ');
-  //     setAddresses([]); // đảm bảo không bị null sau khi lỗi
   //   }
   // };
+  const fetchAddresses = async () => {
+    try {
+      const res = await getAllAddress();
+      console.log('Addresses fetched:', res);
+      setAddresses(Array.isArray(res.data) ? res.data : []);
+    } catch {
+      message.error('Lỗi khi tải danh sách địa chỉ');
+      setAddresses([]); // đảm bảo không bị null sau khi lỗi
+    }
+  };
 
   useEffect(() => {
     fetchAddresses();
@@ -71,7 +71,7 @@ export default function Address() {
   }, [userId]);
 
   const handleOpen = (addr) => {
-    setEditId(addr?._id && typeof addr._id === 'string' ? addr._id : addr?._id?.toString() || null);
+    setEditId(addr?.id && typeof addr.id === 'string' ? addr.id : addr?.id?.toString() || null);
     form.setFieldsValue(addr || initialForm);
     setOpen(true);
   };
@@ -88,14 +88,14 @@ export default function Address() {
       const values = await form.validateFields();
       setLoading(true);
 
-      const { _id, user, ...cleanedValues } = values;
+      const { id, user, ...cleanedValues } = values;
 
       if (cleanedValues.isDefault) {
         await Promise.all(
           addresses
             .filter((addr) => addr.isDefault)
             .map((addr) => {
-              const id = getRealId(addr._id);
+              const id = getRealId(addr.id);
               console.log('updateAddress unset default id:', id, 'type:', typeof id);
               return updateAddress(id, userId, { ...addr, isDefault: false });
             }),
@@ -115,7 +115,7 @@ export default function Address() {
       //     addresses
       //       .filter((addr) => addr.isDefault)
       //       .map((addr) => {
-      //         const id = getRealId(addr._id);
+      //         const id = getRealId(addr.id);
       //         return updateAddress(id, { ...addr, isDefault: false });
       //       }),
       //   );
@@ -143,33 +143,23 @@ export default function Address() {
   const handleSetDefault = async (id) => {
     try {
       console.log('handleSetDefault id:', id, 'type:', typeof id);
-      const current = addresses.find((addr) => getRealId(addr._id) === id);
+      const current = addresses.find((addr) => getRealId(addr.id) === id);
       if (!current) throw new Error('Không tìm thấy địa chỉ');
 
       await Promise.all(
         addresses
-          .filter((addr) => getRealId(addr._id) !== id && addr.isDefault)
+          .filter((addr) => getRealId(addr.id) !== id && addr.isDefault)
           .map((addr) => {
-            const addrId = getRealId(addr._id);
+            const addrId = getRealId(addr.id);
             console.log('updateAddress unset default id:', addrId, 'type:', typeof addrId);
             return updateAddress(addrId, userId, { ...addr, isDefault: false });
           }),
       );
 
-      const { _id, user, ...rest } = current;
-      console.log('updateAddress set default id:', id, 'type:', typeof id);
-      await updateAddress(id, userId, { ...rest, isDefault: true });
-      // await Promise.all(
-      //   addresses
-      //     .filter((addr) => getRealId(addr._id) !== id && addr.isDefault)
-      //     .map((addr) => {
-      //       const addrId = getRealId(addr._id);
-      //       return updateAddress(addrId, { ...addr, isDefault: false });
-      //     }),
-      // );
-
-      // const { _id, user, ...rest } = current;
-      // await updateAddress(id, { ...rest, isDefault: true });
+      // Sửa ở đây: KHÔNG dùng id2, chỉ dùng id đã destructure
+      const { id: currentId, user, ...rest } = current;
+      console.log('updateAddress set default id:', currentId, 'type:', typeof currentId);
+      await updateAddress(currentId, userId, { ...rest, isDefault: true });
 
       message.success('Cập nhật địa chỉ mặc định thành công');
       fetchAddresses();
@@ -185,7 +175,7 @@ export default function Address() {
       setConfirmLoading(true);
       console.log('handleDelete id:', id, 'type:', typeof id);
 
-      const current = addresses.find((addr) => getRealId(addr._id) === id);
+      const current = addresses.find((addr) => getRealId(addr.id) === id);
       if (!current) throw new Error('Không tìm thấy địa chỉ');
 
       if (current.isDefault) {
@@ -207,14 +197,14 @@ export default function Address() {
     }
   };
 
-  // Hàm lấy id thực sự từ _id (objectId hoặc string)
-  function getRealId(_id) {
-    if (!_id) return '';
-    if (typeof _id === 'string') return _id;
-    if (_id.$oid) return _id.$oid;
-    if (_id.toHexString) return _id.toHexString();
-    if (_id.timestamp && _id.date) return _id.timestamp.toString(); // fallback, không nên dùng
-    return _id.toString();
+  // Hàm lấy id thực sự từ id (objectId hoặc string)
+  function getRealId(id) {
+    if (!id) return '';
+    if (typeof id === 'string') return id;
+    if (id.$oid) return id.$oid;
+    if (id.toHexString) return id.toHexString();
+    if (id.timestamp && id.date) return id.timestamp.toString(); // fallback, không nên dùng
+    return id.toString();
   }
 
   return (
@@ -237,11 +227,11 @@ export default function Address() {
           <List
             dataSource={[...addresses].sort((a, b) => b.isDefault - a.isDefault)}
             renderItem={(addr) => {
-              // Log toàn bộ addr và kiểu _id để debug
+              // Log toàn bộ addr và kiểu id để debug
               console.log('addr:', addr);
-              console.log('addr._id:', addr._id, 'typeof:', typeof addr._id);
+              console.log('addr.id:', addr.id, 'typeof:', typeof addr.id);
 
-              const realId = getRealId(addr._id);
+              const realId = getRealId(addr.id);
 
               return (
                 <List.Item className="!border-b !p-0">

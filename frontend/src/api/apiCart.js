@@ -1,4 +1,6 @@
 // src/api/apiCart.js
+// import { response } from '~/services/axios';
+
 export const getCart = async (instance) => {
   try {
     const res = await instance.get('/api/cart');
