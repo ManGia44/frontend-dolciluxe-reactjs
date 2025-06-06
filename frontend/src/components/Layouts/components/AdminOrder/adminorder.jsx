@@ -10,14 +10,14 @@ import ImageDownloader from '~/components/Layouts/components/ImageDownloader';
 
 function AdminOrder() {
   const [orders, setOrders] = useState([]);
-  const [topSellingProducts, setTopSellingProducts] = useState([]);
+  const [topSellingProducts, setTopSellingProducts] = useState({});
 
   const [users, setUsers] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusDialog, setStatusDialog] = useState({ open: false, orderId: null, newStatus: '' });
-  const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
+  // const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const user = useSelector((state) => state.auth.login.currentUser);
   const [image, setImage] = useState('');
@@ -29,16 +29,17 @@ function AdminOrder() {
       else {
         setLoading(true);
         try {
-          if (topSellingProducts.length === 0){
+          if (topSellingProducts.product.length === 0){
             setImage(null);
             return;
           }
-          const res = await generateImage_admin(topSellingProducts.join(", "), instance);
+          const res = await generateImage_admin(topSellingProducts.des.join(", "), instance);
           console.log(res);
           // setImage(res[0].tmp_url);
           // inputRef.current.focus();
           if (res && res.image_url) {
               setImage(res.image_url);
+              // setIsGenerating(true)
               await uploadcloudinary(image, instance);
           } else if (res && res.message) {
               alert(`Lỗi tạo ảnh: ${res.message}`);
@@ -104,6 +105,7 @@ function AdminOrder() {
         const product = item.product?.productName;
         if (!product) {
           const quantity = parseInt(item.quantity, 10);
+          const des = item.detail;
           if (productSales.has(product)) {
             const existingProduct = productSales.get(product);
             existingProduct.totalQuantity += quantity;
@@ -112,6 +114,7 @@ function AdminOrder() {
           else {
             productSales.set(product, {
                 product: product,
+                des: des,
                 totalQuantity: quantity
             });
           }
@@ -120,7 +123,7 @@ function AdminOrder() {
     });
     const sortedProducts = Array.from(productSales.values()).sort((a, b) => b.totalQuantity - a.totalQuantity).slice(0, 3);
 
-    setTopSellingProducts(sortedProducts.productarr);
+    setTopSellingProducts(sortedProducts);
   };
   const getUserInfo = (userId) => users.find((u) => u.id === userId);
   const getUserDefaultAddress = (userId) =>
@@ -234,9 +237,9 @@ function AdminOrder() {
           </table>
         )}
       </div>
-      {topSellingProducts.length > 0 && (
+      {topSellingProducts.product.length > 0 && (
         <div className="relative w-full lg:w-1/2">
-        <p className="text-center text-base font-normal leading-[32px] sm:text-lg sm:leading-[48px] lg:text-xl lg:leading-[64px]">Top {topSellingProducts.length.toString()} bánh bán chạy nhất cửa hàng là {topSellingProducts.join(", ")}</p>
+        <p className="text-center text-base font-normal leading-[32px] sm:text-lg sm:leading-[48px] lg:text-xl lg:leading-[64px]">Top {topSellingProducts.product.length.toString()} bánh bán chạy nhất cửa hàng là {topSellingProducts.product.join(", ")}</p>
         <button
           onClick={handleGenerateImageToAdmin}
           className="rounded-lg bg-blue-600 px-5 py-2 text-white shadow hover:bg-blue-700"
@@ -246,17 +249,17 @@ function AdminOrder() {
         </button>
 
         {/* Hiển thị ảnh được tạo từ API */}
-        {generatedImageUrl && (
+        {image && (
             <div className="mt-8 flex flex-col items-center gap-4">
                 <h3 className="text-lg font-semibold">Ảnh đã tạo từ AI:</h3>
                 <img
-                    src={generatedImageUrl}
+                    src={image}
                     alt="AI Generated Cake"
                     className="w-[300px] h-[300px] object-contain rounded-lg shadow-md"
                 />
               </div>
         )}
-        <ImageDownloader imageUrl={generatedImageUrl} />
+        <ImageDownloader imageUrl={image} />
       </div>
       )}
 
