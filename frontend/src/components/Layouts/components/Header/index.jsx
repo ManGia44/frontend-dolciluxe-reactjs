@@ -131,14 +131,16 @@ function Header() {
           </li>
         </ul>
 
-        <div className="flex gap-6">
+        <div className="flex gap-12">
           {/* Cart Logo */}
           <CartPopover />
           {/* User Logo */}
           {user ? (
+            <span className="text-2xl flex items-center">
             <UserTooltip onClick={() => setIsLogout(true)} currentUser={user} />
+              </span>
           ) : (
-            <UserProfile className="navbar-icon" onClick={() => handleLogin()} />
+            <UserProfile className="navbar-icon text-4xl" onClick={() => handleLogin()} />
           )}
           <div className="lg:hidden">
             <MobMenu />

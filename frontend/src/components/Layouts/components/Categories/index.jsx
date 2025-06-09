@@ -8,6 +8,7 @@ import Card from '../Card';
 import useCake from '~/hooks/useCake';
 import usePagination from '~/hooks/usePagination';
 
+
 const theme = createTheme({
   palette: {
     secondary: {

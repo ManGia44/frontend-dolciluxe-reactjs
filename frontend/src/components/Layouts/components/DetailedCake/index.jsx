@@ -3,7 +3,8 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { getCakeById, getCakesByType } from '~/api/apiCakes';
 import Card from '../Card';
 import { useDispatch, useSelector } from 'react-redux';
-import { AddToCartContext } from '../../DefaultLayout';
+// Xóa import AddToCartContext
+// import { AddToCartContext } from '../../DefaultLayout';
 import { addCartItem, fetchCart } from '~/redux/cartSlice';
 import { Spin, message } from 'antd';
 
@@ -19,7 +20,8 @@ function DetailedCake() {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.login.currentUser);
-  const { triggerSuccessPopup } = useContext(AddToCartContext);
+  // Xóa context
+  // const { triggerSuccessPopup } = useContext(AddToCartContext);
   const { categoryName } = location.state || {};
 
   useEffect(() => {
@@ -68,7 +70,8 @@ function DetailedCake() {
       ).unwrap();
 
       dispatch(fetchCart());
-      triggerSuccessPopup();
+      // Sử dụng message.success thay cho triggerSuccessPopup
+      message.success('Đã thêm vào giỏ hàng!');
     } catch (error) {
       console.error('Lỗi khi thêm vào giỏ hàng:', error);
       message.error(error.message || 'Thêm vào giỏ hàng thất bại');

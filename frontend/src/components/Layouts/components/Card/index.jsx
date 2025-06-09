@@ -2,7 +2,8 @@ import { Card as AntdCard, Rate, Button, message } from 'antd';
 import { ShoppingCartOutlined, EyeOutlined, StarFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AddToCartContext } from '~/components/Layouts/DefaultLayout';
+// Xóa import AddToCartContext
+// import { AddToCartContext } from '~/components/Layouts/DefaultLayout';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addCartItem, fetchCart } from '~/redux/cartSlice';
@@ -11,32 +12,33 @@ const { Meta } = AntdCard;
 
 function Card({ image_link, product_name, description, price, index, id, categoryName, cake }) {
   console.log('Card id:', id);
-  const { triggerSuccessPopup } = useContext(AddToCartContext);
+  // Xóa context
+  // const { triggerSuccessPopup } = useContext(AddToCartContext);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.login.currentUser);
 
   const handleAddToCart = async (cake) => {
-  if (!user) {
-    navigate('/auth?mode=signin');
-    return;
-  }
+    if (!user) {
+      navigate('/auth?mode=signin');
+      return;
+    }
 
-  try {
-    await dispatch(
-      addCartItem({
-        productId: cake.id || cake._id,  // ưu tiên id, fallback _id
-        quantity: 1,
-      })
-    ).unwrap();
-    await dispatch(fetchCart()).unwrap();
-    triggerSuccessPopup();
-  } catch (error) {
-    console.error('Lỗi khi thêm vào giỏ hàng:', error);
-    message.error(error.message || 'Thêm vào giỏ hàng thất bại');
-  }
-};
-
+    try {
+      await dispatch(
+        addCartItem({
+          productId: cake.id || cake._id,  // ưu tiên id, fallback _id
+          quantity: 1,
+        })
+      ).unwrap();
+      await dispatch(fetchCart()).unwrap();
+      // Sử dụng message.success thay cho triggerSuccessPopup
+      message.success('Đã thêm vào giỏ hàng!');
+    } catch (error) {
+      console.error('Lỗi khi thêm vào giỏ hàng:', error);
+      message.error(error.message || 'Thêm vào giỏ hàng thất bại');
+    }
+  };
 
   return (
     <AntdCard
@@ -48,7 +50,6 @@ function Card({ image_link, product_name, description, price, index, id, categor
       }}
       cover={
         <Link to={`/detailed/${id}`} state={{ categoryName }}>
-
           <img
             alt={product_name}
             src={image_link}
@@ -96,11 +97,7 @@ function Card({ image_link, product_name, description, price, index, id, categor
         }
       />
     </AntdCard>
-
   );
 }
 
 export default Card;
-
-
-
