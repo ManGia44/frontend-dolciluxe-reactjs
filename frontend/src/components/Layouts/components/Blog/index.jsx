@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import newsfeed7 from '~/assets/images/newsfeed7.png';
 import newsfeed10 from '~/assets/images/newsfeed10.png';
 import newsfeed8 from '~/assets/images/newsfeed8.png';
+import newsfeed11 from '~/assets/images/newsfeed12.png';
 // import newsfeed12 from '~/assets/images/newsfeed12.png';
 
 function Blog() {
@@ -45,20 +46,21 @@ function Blog() {
       author: 'Dolciluxe',
       image: newsfeed8,
     },
-    // {
-    //   id: 'news12',
-    //   title: 'Hương vị trời Tây - Dolciluxe mang đến một trải nghiệm vị giác mới lạ',
-    //   desc: 'Những chiếc bánh mang phong cách phương tây sắp được...',
-    //   date: '2025-04-05',
-    //   author: 'Thiên Phúc',
-    //   image: newsfeed12,
-    // }
+    {
+        id: 'news4',
+        title: 'Tưng bừng đắm chìm vào không gian huyền ảo cùng...',
+        desc: 'Bánh Passion Mousse Cheesecake là sự kết hợp tuyệt vời giữa vị chua ngọt...',
+        date: '2024-07-29',
+        author: 'Dolciluxe',
+        image: newsfeed11,
+      },
+   
   ];
 
   return (
-    <div className="Hot-event pb-[20rem] pt-4">
+    <div className="Hot-event pb-[10rem] pt-4">
       <h1 className="text-center text-3xl font-bold text-primary lg:text-5xl">Sự kiện nổi bật</h1>
-      <div className="Our-product lg:grid-custom-3 md:grid-custom-2 grid-custom-1 relative grid w-full justify-center gap-16 lg:gap-24">
+      <div className="Our-product lg:grid-custom-4 md:grid-custom-2 grid-custom-1 relative grid w-full justify-center gap-10 lg:gap-18">
         {newsfeed.slice(0, 4).map((blog, index) => (
           <div className="img-scale my-10 h-[400px] w-[340px]" key={index}>
             <Link to={`/news?mode=${blog.id}`}>
