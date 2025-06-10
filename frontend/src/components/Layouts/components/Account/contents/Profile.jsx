@@ -29,6 +29,7 @@ const AccountProfile = ({ currentUser, instance }) => {
 
     try {
       const res = await getCurrentUser(userId);
+      console.log('User từ API:', res.data);
       dispatch(
         setUser({
           ...currentUser,
@@ -72,9 +73,11 @@ const AccountProfile = ({ currentUser, instance }) => {
       toast.error('Thiếu thông tin người dùng!');
       return;
     }
+    console.log('Gửi lên:', { id: userId, ...values });
 
     try {
-      await updateUser({ id: userId, ...values });
+      const res = await updateUser({ name: values.name, phone: values.phone });
+      console.log('API trả về:', res);
       toast.success('Cập nhật thành công!', { position: 'bottom-right', autoClose: 3000 });
       await refreshUser();
       setEditProfile({ name: false, email: false, phone: false });

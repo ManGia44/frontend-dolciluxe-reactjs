@@ -29,11 +29,14 @@ function AdminCustomer() {
       try {
         const [userRes, orderRes] = await Promise.all([getListUsers(), getOrders()]);
         const orders = orderRes.data || [];
-        const usersArr = Array.isArray(userRes.data) ? userRes.data : [];
+        console.log('userRes', userRes);
+        console.log('orders', orders);
+        const usersArr = Array.isArray(userRes) ? userRes : [];
         const enrichedUsers = usersArr.map((user) => {
           const userOrders = orders.filter((order) => order.user === user.id);
           return { ...user, orderCount: userOrders.length };
         });
+        console.log('enrichedUsers', enrichedUsers);
         setUsers(enrichedUsers);
         setLoading(false);
       } catch (err) {
@@ -44,7 +47,6 @@ function AdminCustomer() {
 
     fetchUsers();
   }, []);
-
   const handleToggleActive = async (userId, newActiveState) => {
     try {
       const res = await toggleUserActive(userId, newActiveState);

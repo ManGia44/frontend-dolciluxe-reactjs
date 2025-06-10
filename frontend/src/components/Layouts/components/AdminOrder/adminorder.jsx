@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { getOrders, updateOrderStatus } from '~/api/apiOrder';
 import { getListUsers, getAllAddress } from '~/api/apiUser';
@@ -7,11 +7,11 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography }
 import { toast } from 'react-toastify';
 import { uploadcloudinary } from '~/api/apiAI';
 import ImageDownloader from '~/components/Layouts/components/ImageDownloader';
+import { AddToCartContext } from '~/components/Layouts/DefaultLayout';
 
 function AdminOrder() {
   const [orders, setOrders] = useState([]);
-  const [topSellingProducts, setTopSellingProducts] = useState({});
-
+  const [topSellingProducts, setTopSellingProducts] = useState({ product: [], des: [] });
   const [users, setUsers] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,38 +21,38 @@ function AdminOrder() {
   const [isGenerating, setIsGenerating] = useState(false);
   const user = useSelector((state) => state.auth.login.currentUser);
   const [image, setImage] = useState('');
-  const { setIsLogin } = useContext(AddToCartContext);
-  
-  const handleGenerateImageToAdmin = async(e) => {
+  // const { setIsLogin } = useContext(AddToCartContext);
+
+  const handleGenerateImageToAdmin = async (e) => {
     e.preventDefault();
-      if (!user) setIsLogin(true);
-      else {
-        setLoading(true);
-        try {
-          if (topSellingProducts.product.length === 0){
-            setImage(null);
-            return;
-          }
-          const res = await generateImage_admin(topSellingProducts.des.join(", "), instance);
-          console.log(res);
-          // setImage(res[0].tmp_url);
-          // inputRef.current.focus();
-          if (res && res.image_url) {
-              setImage(res.image_url);
-              // setIsGenerating(true)
-              await uploadcloudinary(image, instance);
-          } else if (res && res.message) {
-              alert(`Lỗi tạo ảnh: ${res.message}`);
-          } else {
-              alert('Không thể tạo ảnh. Vui lòng thử lại.');
-          }
-        } catch (err) {
-          console.log(err);
-        } finally {
-          setLoading(false);
+    if (!user) setIsLogin(true);
+    else {
+      setLoading(true);
+      try {
+        if (topSellingProducts.product.length === 0) {
+          setImage(null);
+          return;
         }
+        const res = await generateImage_admin(topSellingProducts.des.join(', '), instance);
+        console.log(res);
+        // setImage(res[0].tmp_url);
+        // inputRef.current.focus();
+        if (res && res.image_url) {
+          setImage(res.image_url);
+          // setIsGenerating(true)
+          await uploadcloudinary(image, instance);
+        } else if (res && res.message) {
+          alert(`Lỗi tạo ảnh: ${res.message}`);
+        } else {
+          alert('Không thể tạo ảnh. Vui lòng thử lại.');
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
       }
-    };
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +83,8 @@ function AdminOrder() {
 
         setOrders(updatedOrders);
         calculateTopSelling(orders);
-        setUsers(userRes.data);
+        setUsers(userRes);
+        console.log(userRes);
         setAddresses(addressRes);
         setLoading(false);
       } catch (err) {
@@ -96,36 +97,40 @@ function AdminOrder() {
   }, []);
 
   const calculateTopSelling = (orders) => {
-    if(orders.length ===0) {
-      setTopSellingProducts(null);
+    if (!orders || orders.length === 0) {
+      setTopSellingProducts({ product: [], des: [] });
+      return;
     }
-    const productSales = new Map(); 
-    orders.forEach(orther => {
-      OtherHouses.items.forEach(item => {
+    const productSales = new Map();
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
         const product = item.product?.productName;
-        if (!product) {
-          const quantity = parseInt(item.quantity, 10);
-          const des = item.detail;
-          if (productSales.has(product)) {
-            const existingProduct = productSales.get(product);
-            existingProduct.totalQuantity += quantity;
-            productSales.set(product, existingProduct);
-          }
-          else {
-            productSales.set(product, {
-                product: product,
-                des: des,
-                totalQuantity: quantity
-            });
-          }
+        if (!product) return;
+        const quantity = parseInt(item.quantity, 10);
+        const des = item.detail;
+        if (productSales.has(product)) {
+          const existingProduct = productSales.get(product);
+          existingProduct.totalQuantity += quantity;
+          productSales.set(product, existingProduct);
+        } else {
+          productSales.set(product, {
+            product: product,
+            des: des,
+            totalQuantity: quantity,
+          });
         }
       });
     });
-    const sortedProducts = Array.from(productSales.values()).sort((a, b) => b.totalQuantity - a.totalQuantity).slice(0, 3);
+    const sortedProducts = Array.from(productSales.values())
+      .sort((a, b) => b.totalQuantity - a.totalQuantity)
+      .slice(0, 3);
 
-    setTopSellingProducts(sortedProducts);
+    setTopSellingProducts({
+      product: sortedProducts.map((p) => p.product),
+      des: sortedProducts.map((p) => p.des),
+    });
   };
-  const getUserInfo = (userId) => users.find((u) => u.id === userId);
+  const getUserInfo = (userId) => (Array.isArray(users) ? users.find((u) => u.id === userId) : undefined);
   const getUserDefaultAddress = (userId) =>
     addresses.find((addr) => addr.user === userId && addr.isDefault) || addresses.find((addr) => addr.user === userId);
   const handleUpdateStatus = (orderId, newStatus) => {
@@ -239,28 +244,31 @@ function AdminOrder() {
       </div>
       {topSellingProducts.product.length > 0 && (
         <div className="relative w-full lg:w-1/2">
-        <p className="text-center text-base font-normal leading-[32px] sm:text-lg sm:leading-[48px] lg:text-xl lg:leading-[64px]">Top {topSellingProducts.product.length.toString()} bánh bán chạy nhất cửa hàng là {topSellingProducts.product.join(", ")}</p>
-        <button
-          onClick={handleGenerateImageToAdmin}
-          className="rounded-lg bg-blue-600 px-5 py-2 text-white shadow hover:bg-blue-700"
-          disabled={isGenerating}
-        >
-          {isGenerating ? 'Đang tạo...' : 'Tạo ảnh'}
-        </button>
+          <p className="text-center text-base font-normal leading-[32px] sm:text-lg sm:leading-[48px] lg:text-xl lg:leading-[64px]">
+            Top {topSellingProducts.product.length.toString()} bánh bán chạy nhất cửa hàng là{' '}
+            {topSellingProducts.product.join(', ')}
+          </p>
+          <button
+            onClick={handleGenerateImageToAdmin}
+            className="rounded-lg bg-blue-600 px-5 py-2 text-white shadow hover:bg-blue-700"
+            disabled={isGenerating}
+          >
+            {isGenerating ? 'Đang tạo...' : 'Tạo ảnh'}
+          </button>
 
-        {/* Hiển thị ảnh được tạo từ API */}
-        {image && (
+          {/* Hiển thị ảnh được tạo từ API */}
+          {image && (
             <div className="mt-8 flex flex-col items-center gap-4">
-                <h3 className="text-lg font-semibold">Ảnh đã tạo từ AI:</h3>
-                <img
-                    src={image}
-                    alt="AI Generated Cake"
-                    className="w-[300px] h-[300px] object-contain rounded-lg shadow-md"
-                />
-              </div>
-        )}
-        <ImageDownloader imageUrl={image} />
-      </div>
+              <h3 className="text-lg font-semibold">Ảnh đã tạo từ AI:</h3>
+              <img
+                src={image}
+                alt="AI Generated Cake"
+                className="h-[300px] w-[300px] rounded-lg object-contain shadow-md"
+              />
+            </div>
+          )}
+          <ImageDownloader imageUrl={image} />
+        </div>
       )}
 
       <Dialog open={statusDialog.open} onClose={() => setStatusDialog({ open: false, orderId: null, newStatus: '' })}>
