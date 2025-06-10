@@ -13,14 +13,11 @@ export const getCurrentUser = async () => {
 };
 
 export const updateUser = async (data) => {
-  try {
-    const { id, ...updateData } = data;
-    const res = await response.put(`/api/users/current-user/update-info`, updateData);
-    return res;
-  } catch (err) {
-    console.error('Lỗi updateUser:', err.response?.data || err.message);
-    throw err;
-  }
+  // Chỉ gửi name và phone, gọi đúng endpoint
+  return await response.put('/api/users/current-user/update-info', {
+    name: data.name,
+    phone: data.phone,
+  });
 };
 
 export const updateImageUser = async (file) => {
