@@ -139,7 +139,7 @@ function GenImage() {
                     ref={inputRef}
                     className="mt-2 w-full"
                   />
-                  <Button type="submit" color="blue" className="mt-4 w-full">
+                  <Button type="submit" color="blue" className="mt-4 w-full bg-[#654644]">
                     Tạo bánh
                   </Button>
                 </form>

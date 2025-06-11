@@ -119,9 +119,12 @@ const AdminProduct = () => {
   const columns = [
     {
       title: 'STT',
-      render: (_, __, index) =>
-        (paginatedCakes.currentPage - 1) * paginatedCakes.pageSize + index + 1,
+      render: (_, __, index) => {
+        const currentPage = Number(paginatedCakes.currentPage) || 1;
+      const pageSize = Number(paginatedCakes.pageSize) || 10;
+      return (currentPage - 1) * pageSize + index + 1;
     },
+  },
     {
       title: 'Ảnh sản phẩm',
       dataIndex: 'imageLink',

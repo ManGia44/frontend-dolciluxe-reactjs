@@ -1,5 +1,5 @@
 import {
-    BarChartOutlined,
+    HomeOutlined,
     FormOutlined,
     ProductOutlined,
     UserAddOutlined
@@ -24,8 +24,8 @@ const NavbarVertical = () => {
     const items = [
         {
             key: 'dashboard',
-            icon: <BarChartOutlined />,
-            label: (<Link to="/admin/dashboard">Thống kê</Link>),
+            icon: <HomeOutlined/>,
+            label: (<Link to="/">Trang bán hàng</Link>),
         },
         {
             key: 'product-management',
@@ -48,7 +48,7 @@ const NavbarVertical = () => {
             <Menu
                 onClick={onClick}
                 selectedKeys={[current]}
-                style={{ height: '100%', backgroundColor: '#fcf0cf' }}
+                style={{ height: '100%', backgroundColor: '#e7e1e1' }}
                 mode="vertical"
                 items={items}
             />
