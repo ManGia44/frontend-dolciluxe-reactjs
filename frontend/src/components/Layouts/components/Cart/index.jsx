@@ -26,11 +26,12 @@ const Cart = () => {
     if (!cartItems || cartItems.length === 0) return;
 
     const productId = location.state.autoSelectedKey;
-    const targetItem = cartItems.find(item => item.product._id === productId);
+    const targetItem = cartItems.find((item) => item.product.id === productId);
+
 
     if (targetItem) {
       setSelectedRowKeys([productId]);
-      setSelectedItemIds([targetItem._id]);
+      setSelectedItemIds([targetItem.id]);
     }
   }, [location.state, cartItems]);
 
@@ -39,15 +40,14 @@ const Cart = () => {
 
     // Tính toán selectedItemIds tương ứng
     const newSelectedItemIds = cartItems
-      .filter(item => newSelectedRowKeys.includes(item.product._id))
-      .map(item => item._id);
+      .filter((item) => newSelectedRowKeys.includes(item.product.id))
+      .map((item) => item.id);
+
 
     setSelectedItemIds(newSelectedItemIds);
     console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     console.log('selectedItemIds changed: ', newSelectedItemIds);
   };
-
-
 
   const showModal = () => {
     setOpen(true);
@@ -80,6 +80,7 @@ const Cart = () => {
       await updateItemQuantity(productId, quantity);
       message.success('Cập nhật thành công');
     } catch (error) {
+      console.error('1', error);
       message.error('Cập nhật thất bại');
     }
   };
@@ -102,28 +103,28 @@ const Cart = () => {
     const stateId = Date.now().toString(36) + Math.random().toString(36).substring(2);
 
     // Lưu vào localStorage với key có prefix
-    localStorage.setItem(`checkoutState_${stateId}`, JSON.stringify({
-      cartItems,
-      selectedRowKeys,
-      selectedItemIds
-    }));
-
+    localStorage.setItem(
+      `checkoutState_${stateId}`,
+      JSON.stringify({
+        cartItems,
+        selectedRowKeys,
+        selectedItemIds,
+      }),
+    );
 
     navigate(`/checkout?state=${stateId}`, {
-
       state: {
-
         cartItems: cartItems, // Truyền toàn bộ giỏ hàng
-        selectedItems: selectedItemIds.length > 0
-          ? cartItems.filter(item => selectedItemIds.includes(item._id))
-          : cartItems, // Nếu không chọn thì truyền tất cả
-        totalAmount: selectedItemIds.length > 0
-          ? selectedItemIds.reduce((sum, itemId) => {
-            const item = cartItems.find(cartItem => cartItem._id === itemId);
-            return sum + (item ? item.product.price * item.quantity : 0);
-          }, 0)
-          : cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
-      }
+        selectedItems:
+          selectedItemIds.length > 0 ? cartItems.filter((item) => selectedItemIds.includes(item.id)) : cartItems, // Nếu không chọn thì truyền tất cả
+        totalAmount:
+          selectedItemIds.length > 0
+            ? selectedItemIds.reduce((sum, itemId) => {
+                const item = cartItems.find((cartItem) => cartItem.id === itemId);
+                return sum + (item ? item.product.price * item.quantity : 0);
+              }, 0)
+            : cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
+      },
     });
   };
 
@@ -135,13 +136,13 @@ const Cart = () => {
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
-      currency: 'VND'
+      currency: 'VND',
     }).format(value);
   };
 
   const dataSource = cartItems.map((item) => ({
-    key: item.product._id,
-    itemId: item._id,
+    key: item.product.id,
+    itemId: item.id,
     product: {
       name: item.product.productName,
       image: item.product.imageLink,
@@ -153,9 +154,9 @@ const Cart = () => {
 
   const totalAmount = formatCurrency(
     selectedRowKeys.reduce((sum, key) => {
-      const item = cartItems.find((cartItem) => cartItem.product._id === key);
+      const item = cartItems.find((cartItem) => cartItem.product.id === key);
       return sum + (item ? item.product.price * item.quantity : 0);
-    }, 0)
+    }, 0),
   );
 
   const hasSelected = selectedRowKeys.length > 0;
@@ -163,10 +164,10 @@ const Cart = () => {
   return (
     <div className="mt-16 w-full bg-white pb-16">
       <div className="mx-4 sm:mx-8 lg:mx-[5rem]">
-        <h1 className="text-center text-3xl sm:text-4xl lg:text-5xl font-bold leading-[48px] sm:leading-[56px] lg:leading-[72px] mt-10">
+        <h1 className="mt-10 text-center text-3xl font-bold leading-[48px] sm:text-4xl sm:leading-[56px] lg:text-5xl lg:leading-[72px]">
           Giỏ hàng
         </h1>
-        <Text className="block py-5 text-center text-sm sm:text-base lg:text-lg font-normal">
+        <Text className="block py-5 text-center text-sm font-normal sm:text-base lg:text-lg">
           Nơi cập nhật những trạng thái tốt nhất
         </Text>
         <div className="flex flex-col gap-6">

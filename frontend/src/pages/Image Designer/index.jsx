@@ -1,111 +1,26 @@
-import { Spinner, Textarea } from 'flowbite-react';
 import { NavLink } from 'react-router-dom';
-import { Button } from 'flowbite-react';
-import { Flex, Radio } from 'antd';
 import imageCake from '~/assets/images/about_1.jpg';
 import { useContext, useRef, useState } from 'react';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import { generateImage } from '~/api/apiAI';
 import { useDispatch, useSelector } from 'react-redux';
 import { createInstance } from '~/redux/interceptors';
 import { loginSuccess } from '~/redux/authSlice';
 import { toast } from 'react-toastify';
-import ImageDownloader from '~/components/Layouts/components/ImageDownloader';
-import { uploadcloudinary } from '~/api/apiAI';
 import { AddToCartContext } from '~/components/Layouts/DefaultLayout';
-function GenImage() {
+import CakeBuilder from '~/components/Layouts/components/GenerateAi/CakeBuilder';
+function EditImage() {
   const [selectedLabel, setSelectedLabel] = useState('');
   const [input, setInput] = useState('');
   const handleChange = (event) => {
     setSelectedLabel(event.target.value);
   };
   const [image, setImage] = useState('');
-  const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
   const user = useSelector((state) => state.auth.login.currentUser);
   const dispatch = useDispatch();
   let instance = createInstance(user, dispatch, loginSuccess);
   const { setIsLogin } = useContext(AddToCartContext);
-  const options = [
-    { label: 'Tiêu chuẩn', value: 'Tiêu chuẩn' },
-    { label: 'HD', value: 'HD' },
-  ];
-  const prefer = [
-    { label: 'Tốc độ', value: 'Tốc độ' },
-    { label: 'Chất lượng', value: 'Chất lượng' },
-  ];
-  const label = 'Tùy chọn phong cách';
-  const items = ['Mặc định', 'Chân thực', 'Đơn giản', 'Cổ điển', 'Hoạt hình', 'Sang trọng', 'Chi tiết, cầu kì'];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!user) setIsLogin(true);
-    else {
-      setLoading(true);
-      try {
-        // const res = await generateImage(user.access_token, input, instance);
-        const res = await generateImage(input, instance);
-        console.log(res);
-        // setImage(res[0].tmp_url);
-        // inputRef.current.focus();
-        if (res && res.file_url) {
-            setImage(res.file_url);
-            await uploadcloudinary(image, instance);
-        } else if (res && res.message) {
-            alert(`Lỗi tạo ảnh: ${res.message}`);
-        } else {
-            alert('Không thể tạo ảnh. Vui lòng thử lại.');
-        }
-        inputRef.current.focus();
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-  const handleEditImage = async (e) => {
-    e.preventDefault();
-    if (!user) setIsLogin(true);
-    else if (!input) {
-      toast.info('Quý khách chưa nhập ý tưởng của mình', {
-        position: 'bottom-right',
-        onClose: 3000,
-      });
-    } else if (!selectedLabel) {
-      toast.info('Quý khách chưa chọn phong cách', {
-        position: 'bottom-right',
-        onClose: 3000,
-      });
-    } else {
-      setLoading(true);
-      const inputStyle = input + 'theo cách thiết kế' + selectedLabel;
-      try {
-        const res = await generateImage(inputStyle, instance);
-        console.log(res);
-        // setImage(res[0].tmp_url);
-        // inputRef.current.focus();
-        if (res && res.file_url) {
-            setImage(res.file_url);
-            await uploadcloudinary(image, instance);
-        } else if (res && res.message) {
-            alert(`Lỗi tạo ảnh: ${res.message}`);
-        } else {
-            alert('Không thể tạo ảnh. Vui lòng thử lại.');
-        }
-        inputRef.current.focus();
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-  console.log('image: ', image);
   return (
     <div className="mt-16 h-fit w-full bg-white/70 pb-5">
       <div className="mx-auto px-6 lg:px-[5rem]">
@@ -113,7 +28,7 @@ function GenImage() {
           <div className="capitalize">
             <NavLink to="/">Trang chủ </NavLink>
             <span>&gt;&gt;</span>
-            <NavLink to="/category"> Generation </NavLink>
+            <NavLink to="/category"> Designer </NavLink>
           </div>
         </div>
         <h1 className="text-center text-3xl font-bold leading-[48px] sm:text-4xl sm:leading-[56px] lg:text-5xl lg:leading-[72px]">
@@ -125,104 +40,8 @@ function GenImage() {
         <div className="mx-auto max-w-screen-lg rounded-3xl border border-black lg:px-[3rem]">
           <div className="m-4 flex flex-col gap-6 sm:m-6 lg:flex-row lg:gap-10">
             {/* Form Section */}
-            <div className="w-full lg:basis-2/5">
-              <div className="promt mb-5">
-                <form id="promt" onSubmit={(e) => handleSubmit(e)}>
-                  <label htmlFor="userInput" className="ml-4 text-base font-semibold sm:text-lg">
-                    Tạo bánh theo suy nghĩ của bạn!
-                  </label>
-                  <Textarea
-                    id="userInput"
-                    rows={5}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    ref={inputRef}
-                    className="mt-2 w-full"
-                  />
-                  <Button type="submit" color="blue" className="mt-4 w-full bg-[#654644]">
-                    Tạo bánh
-                  </Button>
-                </form>
-              </div>
-              <div className="quality my-6">
-                <h3 className="my-2 text-base font-semibold sm:text-lg">Chất lượng ảnh</h3>
-                <Flex vertical gap="middle">
-                  <Radio.Group
-                    block
-                    options={options}
-                    defaultValue="Tiêu chuẩn"
-                    optionType="button"
-                    buttonStyle="solid"
-                  />
-                </Flex>
-              </div>
-              <div className="prefer">
-                <h3 className="my-2 text-base font-semibold sm:text-lg">Ưu tiên</h3>
-                <Flex vertical gap="middle">
-                  <Radio.Group block options={prefer} defaultValue="Tốc độ" optionType="button" buttonStyle="solid" />
-                </Flex>
-              </div>
-            </div>
-
-            {/* Image Section */}
-            <div className="flex w-full flex-col items-center justify-center lg:basis-3/5">
-              {!image && !loading ? (
-                <div className="mx-auto flex h-[200px] w-full max-w-[520px] items-center justify-center bg-slate-50 sm:h-[300px] lg:h-[400px]">
-                  <p className="text-sm text-gray-500 sm:text-base">Chưa có ảnh bánh được tạo.</p>
-                </div>
-              ) : loading ? (
-                <div
-                  role="status"
-                  className="mx-auto flex h-[200px] w-full max-w-[520px] items-center justify-center bg-slate-50 sm:h-[300px] lg:h-[400px]"
-                >
-                  <Spinner color="info" aria-label="Success spinner example" size="xl" />
-                </div>
-              ) : (
-                <img
-                  src={image}
-                  alt="Generated cake"
-                  className="mx-auto h-[200px] w-full max-w-[520px] object-contain sm:h-[300px] lg:h-[400px]"
-                />
-              )}
-              <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
-                <ImageDownloader imageUrl={image} />
-                <Box sx={{ minWidth: 280 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="demo-simple-select-label">{label}</InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={selectedLabel}
-                      label={label}
-                      onChange={handleChange}
-                    >
-                      {items.map((item, index) => (
-                        <MenuItem key={index} value={item}>
-                          {item}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-                <button
-                  onClick={(e) => handleEditImage(e)}
-                  className="rounded-xl bg-[#1a56db] px-5 py-2 text-slate-50 hover:bg-[#1e429f]"
-                >
-                  Chỉnh sửa
-                </button>
-              </div>
-            </div>
+            <CakeBuilder />
           </div>
-
-          {/* Success Message
-          {image && (
-            <div className="flex p-4">
-              <p className="text-sm font-medium text-green-400 sm:text-base">
-                Tạo bánh thành công! Nếu quý khách muốn đặt bánh này, vui lòng liên hệ với Dolciluxe qua zalo
-                0966.888888 để được nhân viên tư vấn chi tiết!
-              </p>
-            </div>
-          )} */}
         </div>
         <div className="py-8">
           <div className="mx-auto px-4">
@@ -330,4 +149,4 @@ function GenImage() {
   );
 }
 
-export default GenImage;
+export default EditImage;

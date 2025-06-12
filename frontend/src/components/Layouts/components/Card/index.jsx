@@ -2,7 +2,8 @@ import { Card as AntdCard, Rate, Button, message } from 'antd';
 import { ShoppingCartOutlined, EyeOutlined, StarFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AddToCartContext } from '~/components/Layouts/DefaultLayout';
+// Xóa import AddToCartContext
+// import { AddToCartContext } from '~/components/Layouts/DefaultLayout';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addCartItem, fetchCart } from '~/redux/cartSlice';
@@ -10,7 +11,9 @@ import { addCartItem, fetchCart } from '~/redux/cartSlice';
 const { Meta } = AntdCard;
 
 function Card({ image_link, product_name, description, price, index, id, categoryName, cake }) {
-  const { triggerSuccessPopup } = useContext(AddToCartContext);
+  console.log('Card id:', id);
+  // Xóa context
+  // const { triggerSuccessPopup } = useContext(AddToCartContext);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.login.currentUser);
@@ -24,15 +27,16 @@ function Card({ image_link, product_name, description, price, index, id, categor
     try {
       await dispatch(
         addCartItem({
-          productId: cake._id,
-          quantity: 1
+          productId: cake.id || cake._id,  // ưu tiên id, fallback _id
+          quantity: 1,
         })
       ).unwrap();
       await dispatch(fetchCart()).unwrap();
-      triggerSuccessPopup();
+      // Sử dụng message.success thay cho triggerSuccessPopup
+      message.success('Đã thêm vào giỏ hàng!');
     } catch (error) {
       console.error('Lỗi khi thêm vào giỏ hàng:', error);
-      message.error('Có lỗi xảy ra khi thêm vào giỏ hàng');
+      message.error(error.message || 'Thêm vào giỏ hàng thất bại');
     }
   };
 
@@ -93,11 +97,7 @@ function Card({ image_link, product_name, description, price, index, id, categor
         }
       />
     </AntdCard>
-
   );
 }
 
 export default Card;
-
-
-

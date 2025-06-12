@@ -29,6 +29,7 @@ const AccountProfile = ({ currentUser, instance }) => {
 
     try {
       const res = await getCurrentUser(userId);
+      console.log('User từ API:', res.data);
       dispatch(
         setUser({
           ...currentUser,
@@ -72,9 +73,11 @@ const AccountProfile = ({ currentUser, instance }) => {
       toast.error('Thiếu thông tin người dùng!');
       return;
     }
+    console.log('Gửi lên:', { id: userId, ...values });
 
     try {
-      await updateUser({ id: userId, ...values });
+      const res = await updateUser({ name: values.name, phone: values.phone });
+      console.log('API trả về:', res);
       toast.success('Cập nhật thành công!', { position: 'bottom-right', autoClose: 3000 });
       await refreshUser();
       setEditProfile({ name: false, email: false, phone: false });
@@ -90,7 +93,7 @@ const AccountProfile = ({ currentUser, instance }) => {
 
   return (
     <div className="flex-col">
-      <div className="flex basis-1/3 flex-col items-center justify-center w-full">
+      <div className="flex w-full basis-1/3 flex-col items-center justify-center">
         <div className="relative size-40 rounded-full border-2">
           <img
             src={image ? URL.createObjectURL(image) : userData?.profile_picture || userData?.avatar || avatar}

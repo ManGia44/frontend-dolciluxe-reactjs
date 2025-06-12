@@ -23,6 +23,7 @@
     "eslint-config-prettier": "^9.1.0",
     "flowbite-react": "^0.10.2",
     "html-to-image": "^1.11.13",
+    "html2canvas": "^1.4.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.456.0",
     "motion": "^11.11.14",

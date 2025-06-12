@@ -120,22 +120,27 @@ function Header() {
           <li className={pathname === '/news' ? 'menu-active' : 'menu-navbar'}>
             <NavLink to="/news">TIN TỨC</NavLink>
           </li>
+          <li className={pathname === '/design' ? 'menu-active' : 'menu-navbar'}>
+            <NavLink to="/design">THIẾT KẾ</NavLink>
+          </li>
           <li className={pathname === '/generator' ? 'menu-active' : 'menu-navbar'}>
-            <NavLink to="/generator">AI</NavLink>
+            <NavLink to="/generator">TẠO NHANH</NavLink>
           </li>
           <li className={pathname === '/about' ? 'menu-active' : 'menu-navbar'}>
             <NavLink to="/about">VỀ CHÚNG TÔI</NavLink>
           </li>
         </ul>
 
-        <div className="flex gap-6">
+        <div className="flex gap-12">
           {/* Cart Logo */}
           <CartPopover />
           {/* User Logo */}
           {user ? (
+            <span className="text-2xl flex items-center">
             <UserTooltip onClick={() => setIsLogout(true)} currentUser={user} />
+              </span>
           ) : (
-            <UserProfile className="navbar-icon" onClick={() => handleLogin()} />
+            <UserProfile className="navbar-icon text-4xl" onClick={() => handleLogin()} />
           )}
           <div className="lg:hidden">
             <MobMenu />

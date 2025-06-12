@@ -31,7 +31,7 @@ function AdminHeader() {
     },
   ];
   return (
-    <div className="relative flex h-16 w-full items-center justify-between bg-[#f3d1dc]">
+    <div className="relative flex h-16 w-full items-center justify-between bg-[#e7e1e1]">
       {/* e3dcdc */}
       <div className="flex h-full w-60 items-center justify-center">
         <CakewaiAdmin className="mt-2" />

@@ -23,10 +23,10 @@ const AccountLayout = () => {
       link: '/account/address',
       title: 'Địa chỉ giao hàng',
     },
-    'change-password': {
-      link: '/account/change-password',
-      title: 'Đổi mật khẩu',
-    },
+    // 'change-password': {
+    //   link: '/account/change-password',
+    //   title: 'Đổi mật khẩu',
+    // },
     orders: {
       link: '/account/orders',
       title: 'Đơn hàng',
